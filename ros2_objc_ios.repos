@@ -1,0 +1,89 @@
+repositories:
+  ament/ament_cmake:
+    type: git
+    url: https://github.com/ament/ament_cmake.git
+    version: master
+  ament/ament_index:
+    type: git
+    url: https://github.com/ament/ament_index.git
+    version: master
+  ament/ament_lint:
+    type: git
+    url: https://github.com/ament/ament_lint.git
+    version: master
+  ament/ament_package:
+    type: git
+    url: https://github.com/ament/ament_package.git
+    version: master
+  ament/ament_tools:
+    type: git
+    url: https://github.com/esteve/ament_tools.git
+    version: honor-build-shared-libs-xcode
+  ament/gmock_vendor:
+    type: git
+    url: https://github.com/ament/gmock_vendor.git
+    version: master
+  ament/gtest_vendor:
+    type: git
+    url: https://github.com/ament/gtest_vendor.git
+    version: master
+  ament/osrf_pycommon:
+    type: git
+    url: https://github.com/osrf/osrf_pycommon.git
+    version: master
+  eProsima/Fast-CDR:
+    type: git
+    url: https://github.com/esteve/FastCDR.git
+    version: honor-build-shared-libs
+  eProsima/Fast-RTPS-ios:
+    type: git
+    url: https://github.com/esteve/Fast-RTPS.git
+    version: cpp11-android
+  ros2/common_interfaces:
+    type: git
+    url: https://github.com/ros2/common_interfaces.git
+    version: master
+  ros2/rcl:
+    type: git
+    url: https://github.com/esteve/rcl.git
+    version: honor-build-shared-libs
+  ros2/rcl_interfaces:
+    type: git
+    url: https://github.com/ros2/rcl_interfaces.git
+    version: master
+  ros2/rmw:
+    type: git
+    url: https://github.com/esteve/rmw.git
+    version: honor-build-shared-libs-ios
+  ros2/rmw_fastrtps:
+    type: git
+    url: https://github.com/esteve/rmw_fastrtps.git
+    version: honor-build-shared-libs-ios
+  ros2/rmw_implementation:
+    type: git
+    url: https://github.com/ros2/rmw_implementation.git
+    version: master
+  ros2/rosidl:
+    type: git
+    url: https://github.com/esteve/rosidl.git
+    version: honor-build-shared-libs
+  ros2/rosidl_dds:
+    type: git
+    url: https://github.com/ros2/rosidl_dds.git
+    version: master
+  ros2/rosidl_typesupport-ios:
+    type: git
+    url: https://github.com/esteve/rosidl_typesupport.git
+    version: ios
+  ros2_objc/ros2_ios_examples:
+    type: git
+    url: https://github.com/esteve/ros2_ios_examples.git
+    version: master
+  ros2_objc/ros2_objc:
+    type: git
+    url: https://github.com/esteve/ros2_objc.git
+    version: master
+  ruslo/polly:
+    type: git
+    url: https://github.com/ruslo/polly.git
+    version: master

@@ -1,0 +1,17 @@
+#import <Foundation/Foundation.h>
+
+#import "ROS_@(package_name)/@(subfolder)/@(type_name)_Request.h"
+#import "ROS_@(package_name)/@(subfolder)/@(type_name)_Response.h"
+
+@{
+message_objc_name = 'ROS_{}_{}_{}'.format(package_name, subfolder, type_name)
+}@
+
+@@interface @(message_objc_name) : NSObject
+
++(intptr_t)serviceTypesupportHandle;
+
++ (Class) requestType;
++ (Class) responseType;
+
+@@end
