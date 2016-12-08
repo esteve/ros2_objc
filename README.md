@@ -130,7 +130,7 @@ The following was tested on an iPhone 5C running iOS 9.1.
 ```
 mkdir -p ~/ros2_ios_ws/src
 cd ~/ros2_ios_ws
-wget https://raw.githubusercontent.com/esteve/ros2_java/master/ros2_objc_ios.repos
+wget https://raw.githubusercontent.com/esteve/ros2_objc/master/ros2_objc_ios.repos
 vcs import ~/ros2_ios_ws/src < ros2_objc_ios.repos
 touch ~/ros2_ios_ws/src/ros2/rosidl/python_cmake_module/AMENT_IGNORE
 touch ~/ros2_ios_ws/src/ros2/rosidl/rosidl_generator_py/AMENT_IGNORE
