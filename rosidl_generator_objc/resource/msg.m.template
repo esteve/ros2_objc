@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #include <@(spec.base_type.pkg_name)/@(subfolder)/@(module_name).h>
-#include <rosidl_generator_c/message_type_support.h>
+#include <rosidl_generator_c/message_type_support_struct.h>
 
 #include <rosidl_generator_c/string.h>
 #include <rosidl_generator_c/string_functions.h>
