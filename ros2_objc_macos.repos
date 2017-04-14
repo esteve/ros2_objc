@@ -17,8 +17,8 @@ repositories:
     version: master
   ament/ament_tools:
     type: git
-    url: https://github.com/esteve/ament_tools.git
-    version: honor-build-shared-libs-xcode
+    url: https://github.com/ament/ament_tools.git
+    version: master
   ament/gmock_vendor:
     type: git
     url: https://github.com/ament/gmock_vendor.git
@@ -37,8 +37,8 @@ repositories:
     version: master
   eProsima/Fast-CDR:
     type: git
-    url: https://github.com/esteve/FastCDR.git
-    version: honor-build-shared-libs
+    url: https://github.com/eProsima/FastCDR.git
+    version: master
   eProsima/Fast-RTPS:
     type: git
     url: https://github.com/eProsima/Fast-RTPS.git
@@ -69,8 +69,8 @@ repositories:
     version: master
   ros2/rcl:
     type: git
-    url: https://github.com/esteve/rcl.git
-    version: honor-build-shared-libs
+    url: https://github.com/ros2/rcl.git
+    version: master
   ros2/rcl_interfaces:
     type: git
     url: https://github.com/ros2/rcl_interfaces.git
@@ -93,8 +93,8 @@ repositories:
     version: master
   ros2/rmw:
     type: git
-    url: https://github.com/esteve/rmw.git
-    version: honor-build-shared-libs-ios
+    url: https://github.com/ros2/rmw.git
+    version: master
   ros2/rmw_connext:
     type: git
     url: https://github.com/ros2/rmw_connext.git
@@ -123,6 +123,10 @@ repositories:
     type: git
     url: https://github.com/ros2/rosidl_dds.git
     version: master
+  ros2/rosidl_typesupport:
+    type: git
+    url: https://github.com/esteve/rosidl_typesupport.git
+    version: disable-multiple-typesupport-static
   ros2/system_tests:
     type: git
     url: https://github.com/ros2/system_tests.git
@@ -139,10 +143,6 @@ repositories:
     type: git
     url: https://github.com/esteve/ros2_objc_examples.git
     version: master
-  ros2_objc/rosidl_typesupport-objc:
-    type: git
-    url: https://github.com/esteve/rosidl_typesupport.git
-    version: objc
   vendor/console_bridge:
     type: git
     url: https://github.com/ros/console_bridge.git
