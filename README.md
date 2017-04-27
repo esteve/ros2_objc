@@ -13,9 +13,21 @@ Besides this repository itself, there's also:
 
 Additionally, there is a collection of pull requests for ROS2 that are needed for RCLObjC to work on macOS and iOS:
 
+#### Pending
+
 [rmw_fastrtps] Export FastRTPS libraries
 
 https://github.com/ros2/rmw_fastrtps/pull/75
+
+[rosidl] Control shared/static linking via BUILD_SHARED_LIBS
+
+https://github.com/ros2/rosidl/pull/183
+
+[rmw_fastrtps] Control shared/static linking via BUILD_SHARED_LIBS and ament_cmake_ros 
+
+https://github.com/ros2/rmw_fastrtps/pull/87
+
+#### Merged
 
 [rmw] Add support for pthread-based thread local storage
 
@@ -24,10 +36,6 @@ https://github.com/ros2/rmw/pull/80
 [ament_tools] Use Xcode as system generator and builder on OSX
 
 https://github.com/ament/ament_tools/pull/127
-
-[ament_tools] Build shared libraries by default, but honor BUILD_SHARED_LIBS
-
-https://github.com/ament/ament_tools/pull/128
 
 [Fast-CDR] Control shared/static linking via EPROSIMA_HONOR_BUILD_SHARED_LIBS and BUILD_SHARED_LIBS
 
@@ -40,10 +48,6 @@ https://github.com/ros2/rcl/pull/93
 [rmw] Control shared/static linking via BUILD_SHARED_LIBS
 
 https://github.com/ros2/rmw/pull/81
-
-[rosidl] Control shared/static linking via BUILD_SHARED_LIBS
-
-https://github.com/ros2/rosidl/pull/183
 
 Does this support Swift?
 ------------------------
