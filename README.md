@@ -36,6 +36,7 @@ https://github.com/eProsima/Fast-CDR/pull/8
 [rcl] Control shared/static linking via BUILD_SHARED_LIBS
 
 https://github.com/ros2/rcl/pull/93
+https://github.com/ros2/rcl/pull/115
 
 [rmw] Add support for pthread-based thread local storage
 
