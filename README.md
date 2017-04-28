@@ -23,15 +23,7 @@ https://github.com/ros2/rmw_fastrtps/pull/75
 
 https://github.com/ros2/rosidl/pull/183
 
-[rmw_fastrtps] Control shared/static linking via BUILD_SHARED_LIBS and ament_cmake_ros 
-
-https://github.com/ros2/rmw_fastrtps/pull/87
-
 #### Merged
-
-[rmw] Add support for pthread-based thread local storage
-
-https://github.com/ros2/rmw/pull/80
 
 [ament_tools] Use Xcode as system generator and builder on OSX
 
@@ -45,9 +37,17 @@ https://github.com/eProsima/Fast-CDR/pull/8
 
 https://github.com/ros2/rcl/pull/93
 
+[rmw] Add support for pthread-based thread local storage
+
+https://github.com/ros2/rmw/pull/80
+
 [rmw] Control shared/static linking via BUILD_SHARED_LIBS
 
 https://github.com/ros2/rmw/pull/81
+
+[rmw_fastrtps] Control shared/static linking via BUILD_SHARED_LIBS and ament_cmake_ros 
+
+https://github.com/ros2/rmw_fastrtps/pull/87
 
 Does this support Swift?
 ------------------------
