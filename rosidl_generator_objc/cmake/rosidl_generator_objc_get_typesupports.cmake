@@ -1,5 +1,5 @@
 # Copyright 2016 Open Source Robotics Foundation, Inc.
-# Copyright 2016 Esteve Fernandez <esteve@apache.org>
+# Copyright 2016-2017 Esteve Fernandez <esteve@apache.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
 # limitations under the License.
 
 macro(accumulate_typesupports)
-  set(_typesupport_impl "")
-  get_rmw_typesupport(_typesupport_impl ${rmw_implementation} LANGUAGE "C")
-  list(APPEND _typesupport_impls ${_typesupport_impl})
+  set(_typesupport_impl_tmp "")
+  get_rmw_typesupport(_typesupport_impl_tmp ${rmw_implementation} LANGUAGE "C")
+  list(APPEND _typesupport_impls_tmp ${_typesupport_impl_tmp})
 endmacro()
 
 macro(rosidl_generator_objc_get_typesupports TYPESUPPORT_IMPLS)
-  set(TYPESUPPORT_IMPLS "")
-  set(_typesupport_impls "")
+  set(${TYPESUPPORT_IMPLS} "")
+  set(_typesupport_impls_tmp "")
   call_for_each_rmw_implementation(accumulate_typesupports)
-  foreach(_typesupport_impl ${_typesupport_impls})
-    list_append_unique(TYPESUPPORT_IMPLS ${_typesupport_impl})
+
+  foreach(_typesupport_impl ${_typesupport_impls_tmp})
+    list_append_unique(${TYPESUPPORT_IMPLS} ${_typesupport_impl})
   endforeach()
 endmacro()

@@ -15,6 +15,8 @@
 find_package(rosidl_generator_c REQUIRED)
 find_package(rmw_implementation_cmake REQUIRED)
 find_package(rmw REQUIRED)
+find_package(rclobjc_common REQUIRED)
+include(UseObjectiveC)
 
 # Get a list of typesupport implementations from valid rmw implementations.
 rosidl_generator_objc_get_typesupports(_typesupport_impls)
@@ -31,7 +33,7 @@ set(_generated_msg_objc_ts_files "")
 set(_generated_srv_objc_files "")
 set(_generated_srv_objc_ts_files "")
 set(_generated_objc_ts_files "")
- 
+
 foreach(_idl_file ${rosidl_generate_interfaces_IDL_FILES})
   get_filename_component(_parent_folder "${_idl_file}" DIRECTORY)
   get_filename_component(_parent_folder "${_parent_folder}" NAME)
@@ -147,104 +149,97 @@ else()
   )
 endif()
 
+macro(set_properties _build_type)
+  set_target_properties(${_library_name} PROPERTIES
+    COMPILE_FLAGS "${_extension_compile_flags}"
+    LIBRARY_OUTPUT_DIRECTORY${_build_type} ${_output_path}/${_parent_folder}
+    RUNTIME_OUTPUT_DIRECTORY${_build_type} ${_output_path}/${_parent_folder}
+  )
+endmacro()
+
+
+list(FIND _typesupport_impls "rosidl_typesupport_c" _typesupport_c_idx)
+list(LENGTH _typesupport_impls _typesupport_impls_length)
+if(_typesupport_impls_length EQUAL 2)
+  if(NOT _typesupport_impls_length EQUAL -1)
+    list(REMOVE_AT _typesupport_impls ${_typesupport_c_idx})
+    # Small optimization to only build the direct typesupport implementation
+    # and bypass the meta one if there is only one actual typesupport needed
+  endif()
+endif()
+
 foreach(_typesupport_impl ${_typesupport_impls})
   find_package(${_typesupport_impl} REQUIRED)
 
   set(_objcext_suffix "__objcext")
-  set(_library_target "ROS_${PROJECT_NAME}__${_typesupport_impl}")
+  set(_library_name "ROS_${PROJECT_NAME}__${_typesupport_impl}")
 
-  add_library(${_library_target}
+  add_library(${_library_name}
     ${_generated_objc_ts_files_${_typesupport_impl}}
   )
 
-  set_target_properties(${_library_target} PROPERTIES
-    COMPILE_FLAGS "${_extension_compile_flags}"
-    LIBRARY_OUTPUT_DIRECTORY "${_output_path}/${_parent_folder}"
-    RUNTIME_OUTPUT_DIRECTORY "${_output_path}/${_parent_folder}"
-  )
+  set(_extension_compile_flags "-Wall -Wextra ${OBJC_FLAGS}")
 
-  set_target_properties(${_library_target} PROPERTIES
-    COMPILE_FLAGS "${_extension_compile_flags}"
-    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${_output_path}/${_parent_folder}"
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${_output_path}/${_parent_folder}"
-  )
-
-  set_target_properties(${_library_target} PROPERTIES
-    COMPILE_FLAGS "${_extension_compile_flags}"
-    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${_output_path}/${_parent_folder}"
-    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${_output_path}/${_parent_folder}"
-  )
-
-  set_target_properties(${_library_target} PROPERTIES
-    COMPILE_FLAGS "${_extension_compile_flags}"
-    LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${_output_path}/${_parent_folder}"
-    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${_output_path}/${_parent_folder}"
-  )
-
-  set_target_properties(${_library_target} PROPERTIES
-    COMPILE_FLAGS "${_extension_compile_flags}"
-    LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL "${_output_path}/${_parent_folder}"
-    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${_output_path}/${_parent_folder}"
-  )
+  set_properties("")
+  set_properties("_DEBUG")
+  set_properties("_MINSIZEREL")
+  set_properties("_RELEASE")
+  set_properties("_RELWITHDEBINFO")
 
   add_dependencies(
-    ${_library_target}
-    ${rosidl_generate_interfaces_TARGET}__rosidl_generator_c
+    ${_library_name}
     ${rosidl_generate_interfaces_TARGET}${_target_suffix}
+    ${rosidl_generate_interfaces_TARGET}__rosidl_typesupport_c
   )
-
-  set(_extension_compile_flags "")
-  if(NOT WIN32)
-    set(_extension_compile_flags "-Wall -Wextra")
-  endif()
 
   target_link_libraries(
-    ${_library_target}
+    ${_library_name}
     ${PROJECT_NAME}__${_typesupport_impl}
-    "-framework Foundation"
+    ${OBJC_LIBRARIES}
   )
 
-  target_include_directories(${_library_target}
+  rosidl_target_interfaces(${_library_name}
+    ${PROJECT_NAME} rosidl_typesupport_c)
+  target_include_directories(${_library_name}
     PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_c
     ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_objc
     ${JNI_INCLUDE_DIRS}
   )
-
+  ament_target_dependencies(${_library_name}
+    "rosidl_generator_c"
+    "rosidl_generator_objc"
+    "rosidl_typesupport_c"
+    "rosidl_typesupport_interface"
+  )
   foreach(_pkg_name ${rosidl_generate_interfaces_DEPENDENCY_PACKAGE_NAMES})
-    ament_target_dependencies(
-      ${_library_target}
+    ament_target_dependencies(${_library_name}
       ${_pkg_name}
     )
   endforeach()
-
-  ament_target_dependencies(${_library_target}
-    "rosidl_generator_c"
-    "rosidl_generator_objc"
-    "${_typesupport_impl}"
-    "${PROJECT_NAME}__rosidl_generator_c"
-  )
-
-  list(APPEND _extension_dependencies ${_library_target})
-
-  add_dependencies(${_library_target}
+  add_dependencies(${_library_name}
     ${rosidl_generate_interfaces_TARGET}__${_typesupport_impl}
   )
 
+  list(APPEND _extension_dependencies ${_library_name})
+
   if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
-    install(TARGETS ${_library_target}
+    install(TARGETS ${_library_name}
       ARCHIVE DESTINATION lib
       LIBRARY DESTINATION lib
     )
-
-    list(APPEND _exported_libraries ${_library_target})
   endif()
 
 endforeach()
 
 # TODO(esteve): move this to its own ament_export_objc_libraries
-
-ament_export_libraries(${_exported_libraries})
+if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
+  if(_typesupport_impls MATCHES ";")
+    ament_export_libraries("ROS_${PROJECT_NAME}__rosidl_typesupport_c")
+  else()
+    ament_export_libraries("ROS_${PROJECT_NAME}__${_typesupport_impls}")
+  endif()
+endif()
 
 add_dependencies("${PROJECT_NAME}" "${rosidl_generate_interfaces_TARGET}${_target_suffix}")
 

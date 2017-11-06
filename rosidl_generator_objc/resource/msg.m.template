@@ -1,41 +1,54 @@
-#include <stdio.h>
-#include <assert.h>
-#include <stdint.h>
-
-#include <@(spec.base_type.pkg_name)/@(subfolder)/@(module_name).h>
-#include <rosidl_generator_c/message_type_support_struct.h>
-
-#include <rosidl_generator_c/string.h>
-#include <rosidl_generator_c/string_functions.h>
-
 @{
 message_c_name = '%s__%s__%s' % (spec.base_type.pkg_name, subfolder, spec.base_type.type)
 message_objc_name = 'ROS_{}_{}_{}'.format(spec.base_type.pkg_name, subfolder, spec.base_type.type)
 }@
+#include <assert.h>
+#include <stdint.h>
+#include <stdio.h>
+
+#include <@(spec.base_type.pkg_name)/@(subfolder)/@(module_name).h>
+
+#include "rosidl_generator_c/message_type_support_struct.h"
+
+#include "rosidl_generator_c/string.h"
+#include "rosidl_generator_c/string_functions.h"
 
 #import "ROS_@(spec.base_type.pkg_name)/@(subfolder)/@(spec.base_type.type).h"
 
-@@interface @(message_objc_name)()
+@@interface @(message_objc_name) ()
 @@end
 
 @@implementation @(message_objc_name)
-+(intptr_t)typesupportHandle
-{
-  intptr_t ptr = (intptr_t)ROSIDL_GET_TYPE_SUPPORT(@(spec.base_type.pkg_name), @(subfolder), @(spec.msg_name));
-  return ptr;
-}
-
-@(message_c_name) * @(message_objc_name)_convert_from_objc(@(message_objc_name) * _message_objc)
-{
-  @(message_c_name) * ros_message = @(message_c_name)__create();
 
 @[for field in spec.fields]@
 @[    if field.type.is_array]@
-// TODO(esteve): arrays are not supported yet
+  // TODO(esteve): arrays are not supported yet
+@[    else]@
+@[        if field.type.is_primitive_type()]@
+@@synthesize @(field.name);
+@[        end if]@
+@[    end if]@
+@[end for]@
+
++ (intptr_t)typesupportHandle {
+  intptr_t ptr = (intptr_t)ROSIDL_GET_MSG_TYPE_SUPPORT(@(spec.base_type.pkg_name), @(subfolder),
+                                                       @(spec.msg_name));
+  return ptr;
+}
+
+@(message_c_name)*
+@(message_objc_name)_convert_from_objc(
+    @(message_objc_name)* _message_objc) {
+  @(message_c_name)* ros_message =
+      @(message_c_name)__create();
+
+@[for field in spec.fields]@
+@[    if field.type.is_array]@
+  // TODO(esteve): arrays are not supported yet
 @[    else]@
 @[        if field.type.is_primitive_type()]@
 @[            if field.type.type == 'string']@
-  const char * _value@(field.name) = [[_message_objc @(field.name)] UTF8String];
+  const char* _value@(field.name) = [[_message_objc @(field.name)] UTF8String];
   rosidl_generator_c__String__assign(&ros_message->@(field.name), _value@(field.name));
 @[            else]@
   ros_message->@(field.name) = [_message_objc @(field.name)];
@@ -46,17 +59,19 @@ message_objc_name = 'ROS_{}_{}_{}'.format(spec.base_type.pkg_name, subfolder, sp
   return ros_message;
 }
 
-@(message_objc_name) * @(message_objc_name)_convert_to_objc(@(message_c_name) * ros_message)
-{
-  @(message_objc_name) * message = [[@(message_objc_name) alloc] init];
+@(message_objc_name)*
+@(message_objc_name)_convert_to_objc(
+    @(message_c_name)* ros_message) {
+  @(message_objc_name)* message =
+      [[@(message_objc_name) alloc] init];
 
 @[for field in spec.fields]@
 @[    if field.type.is_array]@
-// TODO(esteve): arrays are not supported yet
+  // TODO(esteve): arrays are not supported yet
 @[    else]@
 @[        if field.type.is_primitive_type()]@
 @[            if field.type.type == 'string']@
-  message.@(field.name) = [NSString stringWithUTF8String :ros_message->@(field.name).data];
+  message.@(field.name) = [NSString stringWithUTF8String:ros_message->@(field.name).data];
 @[            else]@
   message.@(field.name) = ros_message->@(field.name);
 @[            end if]@
@@ -65,17 +80,33 @@ message_objc_name = 'ROS_{}_{}_{}'.format(spec.base_type.pkg_name, subfolder, sp
 @[end for]@
   return message;
 }
-  
-+(intptr_t)fromObjcConverterPtr
-{
-  intptr_t ptr = (intptr_t)@(message_objc_name)_convert_from_objc;
+
++ (intptr_t)fromObjcConverterPtr {
+  intptr_t ptr =
+      (intptr_t)@(message_objc_name)_convert_from_objc;
   return ptr;
 }
 
-+(intptr_t)toObjcConverterPtr
-{
-  intptr_t ptr = (intptr_t)@(message_objc_name)_convert_to_objc;
++ (intptr_t)toObjcConverterPtr {
+  intptr_t ptr = (intptr_t)
+      @(message_objc_name)_convert_to_objc;
   return ptr;
+}
+
+- (id)init {
+@[for field in spec.fields]@
+@[    if field.type.is_array]@
+  // TODO(esteve): arrays are not supported yet
+@[    else]@
+@[        if field.type.is_primitive_type()]@
+@[            if field.type.type == 'string']@
+  self.@(field.name) = [[NSString alloc] init];
+@[            else]@
+@[            end if]@
+@[        end if]@
+@[    end if]@
+@[end for]@
+  return self;
 }
 
 @@end

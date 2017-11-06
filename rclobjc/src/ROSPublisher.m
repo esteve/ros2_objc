@@ -13,41 +13,49 @@
  * limitations under the License.
  */
 
-#include "rmw/rmw.h"
 #include "rcl/error_handling.h"
-#include "rcl/rcl.h"
 #include "rcl/node.h"
+#include "rcl/rcl.h"
+#include "rmw/rmw.h"
 
 #import "rclobjc/ROSPublisher.h"
 
-@interface ROSPublisher()
+@interface ROSPublisher ()
 
-@property (assign) intptr_t nodeHandle;
-@property (assign) intptr_t publisherHandle;
-@property (assign) NSString *topic;
+@property(assign) intptr_t nodeHandle;
+@property(assign) intptr_t publisherHandle;
+@property(assign) NSString *topic;
 
 @end
 
 @implementation ROSPublisher
--(void)publish:(id)message {
-  rcl_publisher_t * publisher = (rcl_publisher_t *)self.publisherHandle;
+
+@synthesize nodeHandle;
+@synthesize publisherHandle;
+@synthesize topic;
+
+- (void)publish:(id)message {
+  rcl_publisher_t *publisher = (rcl_publisher_t *)self.publisherHandle;
 
   // TODO(esteve): move messageType as a property
-  //intptr_t converter_ptr = [[message class] performSelector:@selector(fromObjcConverterPtr)];
+  // intptr_t converter_ptr = [[message class]
+  // performSelector:@selector(fromObjcConverterPtr)];
   intptr_t converter_ptr = [[message class] fromObjcConverterPtr];
 
-  typedef void * (* convert_from_objc_signature)(void *);
+  typedef void *(*convert_from_objc_signature)(void *);
   convert_from_objc_signature convert_from_objc =
-    (convert_from_objc_signature)converter_ptr;
+      (convert_from_objc_signature)converter_ptr;
 
-  void * raw_ros_message = convert_from_objc(message);
+  void *raw_ros_message = convert_from_objc(message);
   rcl_ret_t ret = rcl_publish(publisher, raw_ros_message);
   if (ret != RCL_RET_OK) {
     // TODO(esteve): handle error
   }
 }
 
--(instancetype)initWithArguments: (intptr_t)nodeHandle :(intptr_t)publisherHandle :(NSString *)topic {
+- (instancetype)initWithArguments:(intptr_t)
+                       nodeHandle:(intptr_t)
+                  publisherHandle:(NSString *)topic {
   self.nodeHandle = nodeHandle;
   self.publisherHandle = publisherHandle;
   self.topic = topic;

@@ -64,7 +64,9 @@ install(
 )
 
 ament_package(
-  CONFIG_EXTRAS "cmake/rosidl_generator_objc_get_typesupports.cmake"
+  CONFIG_EXTRAS
+    "cmake/objc_common.cmake"
+    "cmake/rosidl_generator_objc_get_typesupports.cmake"
     "cmake/register_objc.cmake"
     "rosidl_generator_objc-extras.cmake.in"
 )

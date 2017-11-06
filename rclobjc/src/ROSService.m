@@ -13,31 +13,37 @@
  * limitations under the License.
  */
 
-#include "rmw/rmw.h"
 #include "rcl/error_handling.h"
-#include "rcl/rcl.h"
 #include "rcl/node.h"
+#include "rcl/rcl.h"
+#include "rmw/rmw.h"
 
 #import "rclobjc/ROSService.h"
 
-@interface ROSService()
+@interface ROSService ()
 
-@property (assign) intptr_t nodeHandle;
-@property (assign) intptr_t serviceHandle;
-@property (assign) Class serviceType;
-@property (assign) NSString *serviceName;
-@property (assign) void (^callback)(NSObject *, NSObject *, NSObject *);
+@property(assign) intptr_t nodeHandle;
+@property(assign) intptr_t serviceHandle;
+@property(assign) Class serviceType;
+@property(assign) NSString *serviceName;
+@property(assign) void (^callback)(NSObject *, NSObject *, NSObject *);
 
 @end
 
 @implementation ROSService
--(instancetype)initWithArguments
-  :(intptr_t)nodeHandle
-  :(intptr_t)serviceHandle
-  :(Class)serviceType
-  :(NSString *)serviceName
-  :(void(^)(NSObject *, NSObject *, NSObject *))callback
-{
+
+@synthesize nodeHandle;
+@synthesize serviceHandle;
+@synthesize serviceType;
+@synthesize serviceName;
+@synthesize callback;
+
+- (instancetype)initWithArguments:(intptr_t)
+                       nodeHandle:(intptr_t)
+                    serviceHandle:(Class)
+                      serviceType:(NSString *)
+                      serviceName:(void (^)(NSObject *, NSObject *,
+                                            NSObject *))callback {
   self.nodeHandle = nodeHandle;
   self.serviceHandle = serviceHandle;
   self.serviceType = serviceType;

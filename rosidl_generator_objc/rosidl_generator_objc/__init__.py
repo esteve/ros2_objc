@@ -135,46 +135,46 @@ def constant_value_to_objc(type_, value):
 
 def get_builtin_objc_type(type_, use_primitives=True):
     if type_ == 'bool':
-        return 'BOOL' if use_primitives else 'NSNumber *'
+        return 'BOOL' if use_primitives else 'NSNumber*'
 
     if type_ == 'byte':
-        return 'uint8_t' if use_primitives else 'NSNumber *'
+        return 'uint8_t' if use_primitives else 'NSNumber*'
 
     if type_ == 'char':
-        return 'char' if use_primitives else 'NSNumber *'
+        return 'char' if use_primitives else 'NSNumber*'
 
     if type_ == 'float32':
-        return 'float' if use_primitives else 'NSNumber *'
+        return 'float' if use_primitives else 'NSNumber*'
 
     if type_ == 'float64':
-        return 'double' if use_primitives else 'NSNumber *'
+        return 'double' if use_primitives else 'NSNumber*'
 
     if type_ in 'int8':
-        return 'uint8_t' if use_primitives else 'NSNumber *'
+        return 'uint8_t' if use_primitives else 'NSNumber*'
 
     if type_ in 'uint8':
-        return 'uint8_t' if use_primitives else 'NSNumber *'
+        return 'uint8_t' if use_primitives else 'NSNumber*'
 
     if type_ in 'int16':
-        return 'int16_t' if use_primitives else 'NSNumber *'
+        return 'int16_t' if use_primitives else 'NSNumber*'
 
     if type_ in 'uint16':
-        return 'uint16_t' if use_primitives else 'NSNumber *'
+        return 'uint16_t' if use_primitives else 'NSNumber*'
 
     if type_ in 'int32':
-        return 'int32_t' if use_primitives else 'NSNumber *'
+        return 'int32_t' if use_primitives else 'NSNumber*'
 
     if type_ in 'uint32':
-        return 'uint32_t' if use_primitives else 'NSNumber *'
+        return 'uint32_t' if use_primitives else 'NSNumber*'
 
     if type_ in 'int64':
-        return 'int64_t' if use_primitives else 'NSNumber *'
+        return 'int64_t' if use_primitives else 'NSNumber*'
 
     if type_ in 'uint64':
-        return 'uint64_t' if use_primitives else 'NSNumber *'
+        return 'uint64_t' if use_primitives else 'NSNumber*'
 
     if type_ == 'string':
-        return 'NSString *'
+        return 'NSString*'
 
     assert False, "unknown type '%s'" % type_
 

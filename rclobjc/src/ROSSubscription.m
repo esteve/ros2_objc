@@ -13,25 +13,36 @@
  * limitations under the License.
  */
 
-#include "rmw/rmw.h"
 #include "rcl/error_handling.h"
-#include "rcl/rcl.h"
 #include "rcl/node.h"
+#include "rcl/rcl.h"
+#include "rmw/rmw.h"
 
 #import "rclobjc/ROSSubscription.h"
 
-@interface ROSSubscription()
+@interface ROSSubscription ()
 
-@property (assign) intptr_t nodeHandle;
-@property (assign) intptr_t subscriptionHandle;
-@property (assign) NSString *topic;
-@property (assign) void (^callback)(NSObject *);
-@property (assign) Class messageType;
+@property(assign) intptr_t nodeHandle;
+@property(assign) intptr_t subscriptionHandle;
+@property(assign) NSString *topic;
+@property(assign) void (^callback)(NSObject *);
+@property(assign) Class messageType;
 
 @end
 
 @implementation ROSSubscription
--(instancetype)initWithArguments :(intptr_t)nodeHandle :(intptr_t)subscriptionHandle :(NSString *)topic :(Class)messageType :(void(^)(NSObject *))callback {
+
+@synthesize nodeHandle;
+@synthesize subscriptionHandle;
+@synthesize topic;
+@synthesize callback;
+@synthesize messageType;
+
+- (instancetype)initWithArguments:(intptr_t)
+                       nodeHandle:(intptr_t)
+               subscriptionHandle:(NSString *)
+                            topic:(Class)
+                      messageType:(void (^)(NSObject *))callback {
   self.nodeHandle = nodeHandle;
   self.subscriptionHandle = subscriptionHandle;
   self.topic = topic;

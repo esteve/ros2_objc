@@ -1,30 +1,30 @@
-#import <Foundation/Foundation.h>
-
-#include <rosidl_generator_c/service_type_support.h>
-#include <@(spec.pkg_name)/@(subfolder)/@(module_name).h>
-
-#import "ROS_@(package_name)/@(subfolder)/@(type_name).h"
-
 @{
 message_objc_name = 'ROS_{}_{}_{}'.format(package_name, subfolder, type_name)
 }@
+#import <Foundation/Foundation.h>
 
-@@interface @(message_objc_name)()
+#include <@(spec.pkg_name)/@(subfolder)/@(module_name).h>
+
+#include "rosidl_generator_c/service_type_support.h"
+
+#import "ROS_@(package_name)/@(subfolder)/@(type_name).h"
+
+@@interface @(message_objc_name) ()
 
 @@end
 
 @@implementation @(message_objc_name)
-+(intptr_t)serviceTypesupportHandle {
-  const rosidl_service_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
-    @(package_name), @(subfolder), @(type_name));
++ (intptr_t)serviceTypesupportHandle {
+  const rosidl_service_type_support_t * ts = ROSIDL_GET_SRV_TYPE_SUPPORT(
+    @(spec.pkg_name), @(spec.srv_name));
   return (intptr_t)ts;
 }
 
-+(Class)requestType {
++ (Class)requestType {
   return [@(message_objc_name)_Request class];
 }
 
-+(Class)responseType {
++ (Class)responseType {
   return [@(message_objc_name)_Response class];
 }
 

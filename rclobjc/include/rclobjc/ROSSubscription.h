@@ -15,14 +15,24 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ROSSubscription<MessageType> : NSObject
+@interface ROSSubscription <MessageType> : NSObject {
+  intptr_t nodeHandle;
+  intptr_t subscriptionHandle;
+  NSString *topic;
+  void (^callback)(NSObject *);
+  Class messageType;
+}
 
--(instancetype)initWithArguments :(intptr_t)nodeHandle :(intptr_t)subscriptionHandle :(NSString *)topic :(Class)messageType :(void(^)(NSObject *))callback;
+- (instancetype)initWithArguments:(intptr_t)
+                       nodeHandle:(intptr_t)
+               subscriptionHandle:(NSString *)
+                            topic:(Class)
+                      messageType:(void (^)(NSObject *))callback;
 
-@property (readonly) intptr_t nodeHandle;
-@property (readonly) intptr_t subscriptionHandle;
-@property (readonly) NSString *topic;
-@property (readonly) void (^callback)(NSObject *);
-@property (readonly) Class messageType;
+@property(readonly) intptr_t nodeHandle;
+@property(readonly) intptr_t subscriptionHandle;
+@property(readonly) NSString *topic;
+@property(readonly) void (^callback)(NSObject *);
+@property(readonly) Class messageType;
 
 @end

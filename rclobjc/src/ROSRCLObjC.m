@@ -13,294 +13,310 @@
  * limitations under the License.
  */
 
-#include <rmw/rmw.h>
 #include <rcl/error_handling.h>
-#include <rcl/rcl.h>
 #include <rcl/node.h>
-#include <rosidl_generator_c/message_type_support.h>
+#include <rcl/rcl.h>
+#include <rmw/rmw.h>
+#include <rosidl_generator_c/message_type_support_struct.h>
 #include <stdlib.h>
 
-#import "rclobjc/ROSRCLObjC.h"
 #import "rclobjc/ROSNode.h"
+#import "rclobjc/ROSRCLObjC.h"
 
 @interface ROSRCLObjC ()
 
-+(intptr_t)createNodeHandle :(NSString *)nodeName;
++ (intptr_t)createNodeHandle:(NSString *)nodeName:(NSString *)nodeNamespace;
 
 @end
 
 @implementation ROSRCLObjC
 
-+(bool)ok {
++ (bool)ok {
   return rcl_ok();
 }
 
-+(void)rclInit {
++ (void)rclInit {
   rcl_ret_t ret = rcl_init(0, NULL, rcl_get_default_allocator());
   if (ret != RCL_RET_OK) {
-  // TODO(esteve): check return status
+    // TODO(esteve): check return status
   }
 }
 
-+(ROSNode *)createNode :(NSString *)nodeName {
-  intptr_t nodeHandle = [ROSRCLObjC createNodeHandle:nodeName];
-  ROSNode * node = [[ROSNode alloc] initWithNameAndHandle:nodeName :nodeHandle ];
++ (ROSNode *)createNode:(NSString *)nodeName {
+  return [ROSRCLObjC createNode:nodeName:@""];
+}
+
++ (ROSNode *)createNode:(NSString *)nodeName:(NSString *)nodeNamespace {
+  intptr_t nodeHandle = [ROSRCLObjC createNodeHandle:nodeName:nodeNamespace];
+  ROSNode *node =
+      [[ROSNode alloc] initWithArguments:nodeName:nodeNamespace:nodeHandle];
   return node;
 }
 
-+(intptr_t)createNodeHandle :(NSString *)nodeName {
-  const char * node_name_tmp = [nodeName UTF8String];
++ (intptr_t)createNodeHandle:(NSString *)nodeName:(NSString *)nodeNamespace {
+  const char *node_name = [nodeName UTF8String];
+  const char *node_namespace = [nodeNamespace UTF8String];
 
-  rcl_node_t * node = (rcl_node_t *)malloc(sizeof(rcl_node_t));
-  node->impl = NULL;
+  rcl_node_t *node = (rcl_node_t *)malloc(sizeof(rcl_node_t));
+  *node = rcl_get_zero_initialized_node();
+
   rcl_node_options_t default_options = rcl_node_get_default_options();
-  rcl_ret_t ret = rcl_node_init(node, node_name_tmp, &default_options);
+  rcl_ret_t ret =
+      rcl_node_init(node, node_name, node_namespace, &default_options);
   if (ret != RCL_RET_OK) {
     // TODO(esteve): check return status
+    NSLog(@"Failed to create node: %s", rcl_get_error_string_safe());
+    rcl_reset_error();
     return 0;
   }
   intptr_t node_handle = (intptr_t)node;
   return node_handle;
 }
 
-+(void)spinOnce :(ROSNode *)node {
++ (void)spinOnce:(ROSNode *)node {
+  rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
 
-    rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
+  int number_of_subscriptions = [[node subscriptions] count];
+  int number_of_guard_conditions = 0;
+  int number_of_timers = 0;
+  int number_of_clients = [[node clients] count];
+  int number_of_services = [[node services] count];
 
-    int number_of_subscriptions = [[node subscriptions] count];
-    int number_of_guard_conditions = 0;
-    int number_of_timers = 0;
-    int number_of_clients = [[node clients] count];
-    int number_of_services = [[node services] count];
+  rcl_ret_t ret = rcl_wait_set_init(
+      &wait_set, number_of_subscriptions, number_of_guard_conditions,
+      number_of_timers, number_of_clients, number_of_services,
+      rcl_get_default_allocator());
+  if (ret != RCL_RET_OK) {
+    // TODO(esteve): handle error
+    assert(false);
+    return;
+  }
 
-    rcl_ret_t ret = rcl_wait_set_init(
-      &wait_set, number_of_subscriptions, number_of_guard_conditions, number_of_timers,
-      number_of_clients, number_of_services, rcl_get_default_allocator());
+  ret = rcl_wait_set_clear_subscriptions(&wait_set);
+  if (ret != RCL_RET_OK) {
+    // TODO(esteve): handle error
+    assert(false);
+    return;
+  }
+
+  ret = rcl_wait_set_clear_services(&wait_set);
+  if (ret != RCL_RET_OK) {
+    // TODO(esteve): handle error
+    assert(false);
+    return;
+  }
+
+  ret = rcl_wait_set_clear_clients(&wait_set);
+  if (ret != RCL_RET_OK) {
+    // TODO(esteve): handle error
+    assert(false);
+    return;
+  }
+
+  for (ROSSubscription *rosSubscription in [node subscriptions]) {
+    rcl_subscription_t *subscription =
+        (rcl_subscription_t *)[rosSubscription subscriptionHandle];
+    ret = rcl_wait_set_add_subscription(&wait_set, subscription);
     if (ret != RCL_RET_OK) {
       // TODO(esteve): handle error
       assert(false);
       return;
     }
+  }
 
-    ret = rcl_wait_set_clear_subscriptions(&wait_set);
+  for (ROSService *rosService in [node services]) {
+    rcl_service_t *service = (rcl_service_t *)[rosService serviceHandle];
+    ret = rcl_wait_set_add_service(&wait_set, service);
     if (ret != RCL_RET_OK) {
       // TODO(esteve): handle error
       assert(false);
       return;
     }
+  }
 
-    ret = rcl_wait_set_clear_services(&wait_set);
+  for (ROSClient *rosClient in [node clients]) {
+    rcl_client_t *client = (rcl_client_t *)[rosClient clientHandle];
+    ret = rcl_wait_set_add_client(&wait_set, client);
     if (ret != RCL_RET_OK) {
       // TODO(esteve): handle error
       assert(false);
       return;
     }
+  }
 
-    ret = rcl_wait_set_clear_clients(&wait_set);
-    if (ret != RCL_RET_OK) {
-      // TODO(esteve): handle error
-      assert(false);
-      return;
-    }
+  ret = rcl_wait(&wait_set, RCL_S_TO_NS(1));
+  if (ret != RCL_RET_OK && ret != RCL_RET_TIMEOUT) {
+    // TODO(esteve): handle error
+    assert(false);
+    return;
+  }
 
-    for (ROSSubscription * rosSubscription in [node subscriptions]) {
-      rcl_subscription_t * subscription = (rcl_subscription_t *)[rosSubscription subscriptionHandle];
-      ret = rcl_wait_set_add_subscription(&wait_set, subscription);
-      if (ret != RCL_RET_OK) {
-        // TODO(esteve): handle error
-        assert(false);
-        return;
-      }
-    }
+  for (ROSSubscription *rosSubscription in [node subscriptions]) {
+    intptr_t subscriptionHandle = [rosSubscription subscriptionHandle];
+    rcl_subscription_t *subscription = (rcl_subscription_t *)subscriptionHandle;
 
-    for (ROSService * rosService in [node services]) {
-      rcl_service_t * service = (rcl_service_t *)[rosService serviceHandle];
-      ret = rcl_wait_set_add_service(&wait_set, service);
-      if (ret != RCL_RET_OK) {
-        // TODO(esteve): handle error
-        assert(false);
-        return;
-      }
-    }
+    intptr_t from_converter_ptr =
+        [[rosSubscription messageType] fromObjcConverterPtr];
 
-    for (ROSClient * rosClient in [node clients]) {
-      rcl_client_t * client = (rcl_client_t *)[rosClient clientHandle];
-      ret = rcl_wait_set_add_client(&wait_set, client);
-      if (ret != RCL_RET_OK) {
-        // TODO(esteve): handle error
-        assert(false);
-        return;
-      }
-    }
+    assert(from_converter_ptr != 0);
 
-    ret = rcl_wait(&wait_set, RCL_S_TO_NS(1));
-    if (ret != RCL_RET_OK && ret != RCL_RET_TIMEOUT) {
-      // TODO(esteve): handle error
-      assert(false);
-      return;
-    }
-
-    for (ROSSubscription * rosSubscription in [node subscriptions]) {
-      rcl_subscription_t * subscription = (rcl_subscription_t *)[rosSubscription subscriptionHandle];
-
-      intptr_t from_converter_ptr = [[rosSubscription messageType] fromObjcConverterPtr];
-
-      assert(from_converter_ptr != 0);
-
-      typedef void * (* convert_from_objc_signature)(NSObject *);
-      convert_from_objc_signature convert_from_objc =
+    typedef void *(*convert_from_objc_signature)(NSObject *);
+    convert_from_objc_signature convert_from_objc =
         (convert_from_objc_signature)from_converter_ptr;
 
-      NSObject * msg_tmp = [[[rosSubscription messageType] alloc] init];
+    NSObject *msg_tmp = [[[rosSubscription messageType] alloc] init];
 
-      NSObject * message = NULL;
+    NSObject *message = NULL;
 
-      void * taken_msg = convert_from_objc(msg_tmp);
+    void *taken_msg = convert_from_objc(msg_tmp);
 
-      assert(taken_msg != NULL);
+    assert(taken_msg != NULL);
 
-      rcl_ret_t ret = rcl_take(subscription, taken_msg, NULL);
+    rcl_ret_t ret = rcl_take(subscription, taken_msg, NULL);
 
-      if (ret != RCL_RET_OK && ret != RCL_RET_SUBSCRIPTION_TAKE_FAILED) {
-        // TODO(esteve): handle error
-        assert(false);
-        return;
-      }
+    if (ret != RCL_RET_OK && ret != RCL_RET_SUBSCRIPTION_TAKE_FAILED) {
+      // TODO(esteve): handle error
+      assert(false);
+      return;
+    }
 
-      if (ret != RCL_RET_SUBSCRIPTION_TAKE_FAILED) {
+    if (ret != RCL_RET_SUBSCRIPTION_TAKE_FAILED) {
+      intptr_t to_converter_ptr =
+          [[rosSubscription messageType] toObjcConverterPtr];
 
-        intptr_t to_converter_ptr = [[rosSubscription messageType] toObjcConverterPtr];
+      assert(to_converter_ptr != 0);
 
-        assert(to_converter_ptr != 0);
-
-        typedef NSObject * (* convert_to_objc_signature)(void *);
-        convert_to_objc_signature convert_to_objc =
+      typedef NSObject *(*convert_to_objc_signature)(void *);
+      convert_to_objc_signature convert_to_objc =
           (convert_to_objc_signature)to_converter_ptr;
 
-        message = convert_to_objc(taken_msg);
-      }
-
-      if (message != NULL) {
-        assert([rosSubscription callback] != NULL);
-        assert([rosSubscription callback] != nil);
-        [rosSubscription callback](message);
-      }
+      message = convert_to_objc(taken_msg);
     }
 
-    for (ROSClient * rosClient in [node clients]) {
-      rcl_client_t * client = (rcl_client_t *)[rosClient clientHandle];
+    if (message != NULL) {
+      assert([rosSubscription callback] != NULL);
+      // assert([rosSubscription callback] != nil);
+      [rosSubscription callback](message);
+    }
+  }
 
-      Class requestType = [[rosClient serviceType] requestType];
-      Class responseType = [[rosClient serviceType] responseType];
+  for (ROSClient *rosClient in [node clients]) {
+    rcl_client_t *client = (rcl_client_t *)[rosClient clientHandle];
 
-      intptr_t requestFromObjcConverterHandle = [requestType fromObjcConverterPtr];
-      intptr_t requestToObjcConverterHandle = [requestType toObjcConverterPtr];
-      intptr_t responseFromObjcConverterHandle = [responseType fromObjcConverterPtr];
-      intptr_t responseToObjcConverterHandle = [responseType toObjcConverterPtr];
+    Class requestType = [[rosClient serviceType] requestType];
+    Class responseType = [[rosClient serviceType] responseType];
 
-      assert(requestFromObjcConverterHandle != 0);
-      assert(requestToObjcConverterHandle != 0);
-      assert(responseFromObjcConverterHandle != 0);
-      assert(responseToObjcConverterHandle != 0);
+    intptr_t requestFromObjcConverterHandle =
+        [requestType fromObjcConverterPtr];
+    intptr_t requestToObjcConverterHandle = [requestType toObjcConverterPtr];
+    intptr_t responseFromObjcConverterHandle =
+        [responseType fromObjcConverterPtr];
+    intptr_t responseToObjcConverterHandle = [responseType toObjcConverterPtr];
 
-      NSObject * requestMessage = [[requestType alloc] init];
-      NSObject * responseMessage = [[responseType alloc] init];
+    assert(requestFromObjcConverterHandle != 0);
+    assert(requestToObjcConverterHandle != 0);
+    assert(responseFromObjcConverterHandle != 0);
+    assert(responseToObjcConverterHandle != 0);
 
-      typedef void * (* convert_from_objc_signature)(NSObject *);
-      typedef NSObject * (* convert_to_objc_signature)(void *);
+    NSObject *requestMessage = [[requestType alloc] init];
+    NSObject *responseMessage = [[responseType alloc] init];
 
-      convert_from_objc_signature convert_request_from_objc =
+    typedef void *(*convert_from_objc_signature)(NSObject *);
+    typedef NSObject *(*convert_to_objc_signature)(void *);
+
+    convert_from_objc_signature convert_request_from_objc =
         (convert_from_objc_signature)requestFromObjcConverterHandle;
 
-      convert_from_objc_signature convert_response_from_objc =
+    convert_from_objc_signature convert_response_from_objc =
         (convert_from_objc_signature)responseFromObjcConverterHandle;
 
-      convert_to_objc_signature convert_request_to_objc =
+    convert_to_objc_signature convert_request_to_objc =
         (convert_to_objc_signature)requestToObjcConverterHandle;
 
-      convert_to_objc_signature convert_response_to_objc =
+    convert_to_objc_signature convert_response_to_objc =
         (convert_to_objc_signature)responseToObjcConverterHandle;
 
-      void * service_response = convert_response_from_objc(responseMessage);
+    void *service_response = convert_response_from_objc(responseMessage);
 
-      rmw_request_id_t header;
-      ret = rcl_take_response(client, &header, service_response);
+    rmw_request_id_t header;
+    ret = rcl_take_response(client, &header, service_response);
 
-      if (ret != RCL_RET_OK && ret != RCL_RET_CLIENT_TAKE_FAILED) {
-        // TODO(esteve) handle error
-        assert(false);
-      }
-
-      if (ret != RCL_RET_CLIENT_TAKE_FAILED) {
-        NSObject * otaken_msg = convert_response_to_objc(service_response);
-
-        assert(otaken_msg != NULL);
-        assert(otaken_msg != nil);
-
-        [rosClient handleResponse :header.sequence_number :otaken_msg];
-      }
+    if (ret != RCL_RET_OK && ret != RCL_RET_CLIENT_TAKE_FAILED) {
+      // TODO(esteve) handle error
+      assert(false);
     }
 
-    for (ROSService * rosService in [node services]) {
-      rcl_service_t * service = (rcl_service_t *)[rosService serviceHandle];
+    if (ret != RCL_RET_CLIENT_TAKE_FAILED) {
+      NSObject *otaken_msg = convert_response_to_objc(service_response);
 
-      Class requestType = [[rosService serviceType] requestType];
-      Class responseType = [[rosService serviceType] responseType];
+      assert(otaken_msg != NULL);
+      assert(otaken_msg != nil);
 
-      intptr_t requestFromObjcConverterHandle = [requestType fromObjcConverterPtr];
-      intptr_t requestToObjcConverterHandle = [requestType toObjcConverterPtr];
-      intptr_t responseFromObjcConverterHandle = [responseType fromObjcConverterPtr];
-      intptr_t responseToObjcConverterHandle = [responseType toObjcConverterPtr];
+      [rosClient handleResponse:header.sequence_number:otaken_msg];
+    }
+  }
 
-      assert(requestFromObjcConverterHandle != 0);
-      assert(requestToObjcConverterHandle != 0);
-      assert(responseFromObjcConverterHandle != 0);
-      assert(responseToObjcConverterHandle != 0);
+  for (ROSService *rosService in [node services]) {
+    rcl_service_t *service = (rcl_service_t *)[rosService serviceHandle];
 
-      NSObject * requestMessage = [[requestType alloc] init];
-      NSObject * responseMessage = [[responseType alloc] init];
+    Class requestType = [[rosService serviceType] requestType];
+    Class responseType = [[rosService serviceType] responseType];
 
-      typedef void * (* convert_from_objc_signature)(NSObject *);
-      typedef NSObject * (* convert_to_objc_signature)(void *);
+    intptr_t requestFromObjcConverterHandle =
+        [requestType fromObjcConverterPtr];
+    intptr_t requestToObjcConverterHandle = [requestType toObjcConverterPtr];
+    intptr_t responseFromObjcConverterHandle =
+        [responseType fromObjcConverterPtr];
+    intptr_t responseToObjcConverterHandle = [responseType toObjcConverterPtr];
 
-      convert_from_objc_signature convert_request_from_objc =
+    assert(requestFromObjcConverterHandle != 0);
+    assert(requestToObjcConverterHandle != 0);
+    assert(responseFromObjcConverterHandle != 0);
+    assert(responseToObjcConverterHandle != 0);
+
+    NSObject *requestMessage = [[requestType alloc] init];
+    NSObject *responseMessage = [[responseType alloc] init];
+
+    typedef void *(*convert_from_objc_signature)(NSObject *);
+    typedef NSObject *(*convert_to_objc_signature)(void *);
+
+    convert_from_objc_signature convert_request_from_objc =
         (convert_from_objc_signature)requestFromObjcConverterHandle;
 
-      convert_from_objc_signature convert_response_from_objc =
+    convert_from_objc_signature convert_response_from_objc =
         (convert_from_objc_signature)responseFromObjcConverterHandle;
 
-      convert_to_objc_signature convert_request_to_objc =
+    convert_to_objc_signature convert_request_to_objc =
         (convert_to_objc_signature)requestToObjcConverterHandle;
 
-      convert_to_objc_signature convert_response_to_objc =
+    convert_to_objc_signature convert_response_to_objc =
         (convert_to_objc_signature)responseToObjcConverterHandle;
 
-      void * service_request = convert_request_from_objc(requestMessage);
+    void *service_request = convert_request_from_objc(requestMessage);
 
-      rmw_request_id_t header;
-      ret = rcl_take_request(service, &header, service_request);
+    rmw_request_id_t header;
+    ret = rcl_take_request(service, &header, service_request);
 
-      if (ret != RCL_RET_OK && ret != RCL_RET_SERVICE_TAKE_FAILED) {
-        // TODO(esteve) handle error
-        assert(false);
-      }
-
-      if (ret != RCL_RET_SERVICE_TAKE_FAILED) {
-        NSObject * otaken_msg = convert_request_to_objc(service_request);
-
-        assert(otaken_msg != NULL);
-        assert(otaken_msg != nil);
-
-        [rosService callback](&header, otaken_msg, responseMessage);
-
-        void * service_response = convert_response_from_objc(responseMessage);
-
-        ret = rcl_send_response(service, &header, service_response);
-
-        assert(ret == RCL_RET_OK);
-      }
+    if (ret != RCL_RET_OK && ret != RCL_RET_SERVICE_TAKE_FAILED) {
+      // TODO(esteve) handle error
+      assert(false);
     }
 
+    if (ret != RCL_RET_SERVICE_TAKE_FAILED) {
+      NSObject *otaken_msg = convert_request_to_objc(service_request);
+
+      assert(otaken_msg != NULL);
+      assert(otaken_msg != nil);
+
+      [rosService callback](&header, otaken_msg, responseMessage);
+
+      void *service_response = convert_response_from_objc(responseMessage);
+
+      ret = rcl_send_response(service, &header, service_response);
+
+      assert(ret == RCL_RET_OK);
+    }
+  }
 }
 
 @end

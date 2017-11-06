@@ -2,13 +2,16 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rclobjc C)
 
-find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
 find_package(rcl REQUIRED)
 find_package(rcl_interfaces REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rmw_implementation REQUIRED)
 find_package(rmw_implementation_cmake REQUIRED)
 find_package(rosidl_generator_c REQUIRED)
+
+find_package(rclobjc_common REQUIRED)
+include(UseObjectiveC)
 
 include_directories(include)
 
@@ -21,34 +24,36 @@ set(${PROJECT_NAME}_SRCS
   "src/ROSSubscription.m"
 )
 
-ament_export_dependencies(ament_cmake)
+add_library(${PROJECT_NAME}
+  ${${PROJECT_NAME}_SRCS})
+
+target_link_libraries(${PROJECT_NAME} "${OBJC_LIBRARIES}")
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  COMPILE_FLAGS "${OBJC_FLAGS}")
+
+ament_target_dependencies(${PROJECT_NAME}
+  "builtin_interfaces"
+  "rcl"
+  "rosidl_generator_c"
+  "rosidl_typesupport_c")
+
+install(
+  TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+ament_export_dependencies(ament_cmake_ros)
+ament_export_dependencies(builtin_interfaces)
 ament_export_dependencies(rcl)
 ament_export_dependencies(rosidl_generator_c)
+ament_export_dependencies(rosidl_typesupport_c)
+ament_export_dependencies(rosidl_typesupport_c)
 
 ament_export_include_directories(include)
 
 ament_export_libraries(${PROJECT_NAME})
-
-macro(target)
-  if(NOT target_suffix STREQUAL "")
-    get_rcl_information("${rmw_implementation}" "rcl${target_suffix}")
-  endif()
-  add_library(${PROJECT_NAME}${target_suffix}
-    ${${PROJECT_NAME}_SRCS})
-  target_link_libraries(${PROJECT_NAME}${target_suffix} "-framework Foundation")
-
-  ament_target_dependencies(${PROJECT_NAME}${target_suffix}
-    "rcl${target_suffix}")
-
-  install(
-    TARGETS ${PROJECT_NAME}${target_suffix}
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
-  )
-endmacro()
-
-call_for_each_rmw_implementation(target GENERATE_DEFAULT)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

@@ -13,32 +13,40 @@
  * limitations under the License.
  */
 
-#include "rmw/rmw.h"
 #include "rcl/error_handling.h"
-#include "rcl/rcl.h"
 #include "rcl/node.h"
+#include "rcl/rcl.h"
+#include "rmw/rmw.h"
 
 #import "rclobjc/ROSClient.h"
 
-@interface ROSClient()
+@interface ROSClient ()
 
-@property (assign) intptr_t nodeHandle;
-@property (assign) intptr_t clientHandle;
-@property (assign) Class serviceType;
-@property (assign) NSString *serviceName;
-@property (assign) Class requestType;
-@property (assign) Class responseType;
-@property (assign) NSMutableDictionary<NSNumber *, void(^)(id)> *pendingRequests;
+@property(assign) intptr_t nodeHandle;
+@property(assign) intptr_t clientHandle;
+@property(assign) Class serviceType;
+@property(assign) NSString *serviceName;
+@property(assign) Class requestType;
+@property(assign) Class responseType;
+@property(assign)
+    NSMutableDictionary<NSNumber *, void (^)(id)> *pendingRequests;
 
 @end
 
 @implementation ROSClient
--(instancetype)initWithArguments
-  :(intptr_t)nodeHandle
-  :(intptr_t)clientHandle
-  :(Class)serviceType
-  :(NSString *)serviceName
-{
+
+@synthesize nodeHandle;
+@synthesize clientHandle;
+@synthesize serviceType;
+@synthesize serviceName;
+@synthesize requestType;
+@synthesize responseType;
+@synthesize pendingRequests;
+
+- (instancetype)initWithArguments:(intptr_t)
+                       nodeHandle:(intptr_t)
+                     clientHandle:(Class)
+                      serviceType:(NSString *)serviceName {
   self.nodeHandle = nodeHandle;
   self.clientHandle = clientHandle;
   self.serviceType = serviceType;
@@ -52,35 +60,32 @@
   return self;
 }
 
--(void)sendRequest
-  :(id) request
-  :(void(^)(id)) callback
-{
-  rcl_client_t * client = (rcl_client_t *)self.clientHandle;
+- (void)sendRequest:(id)request:(void (^)(id))callback {
+  rcl_client_t *client = (rcl_client_t *)self.clientHandle;
 
-  typedef void * (* convert_from_objc_signature)(NSObject *);
+  typedef void *(*convert_from_objc_signature)(NSObject *);
 
-  intptr_t requestFromObjcConverterHandle = [self.requestType fromObjcConverterPtr];
+  intptr_t requestFromObjcConverterHandle =
+      [self.requestType fromObjcConverterPtr];
 
   convert_from_objc_signature convert_request_from_objc =
-    (convert_from_objc_signature)requestFromObjcConverterHandle;
+      (convert_from_objc_signature)requestFromObjcConverterHandle;
 
-  void * ros_request_msg = convert_request_from_objc(request);
+  void *ros_request_msg = convert_request_from_objc(request);
 
   int64_t sequence_number = 0;
 
   rcl_ret_t ret = rcl_send_request(client, ros_request_msg, &sequence_number);
 
-  [self.pendingRequests setObject:callback forKey:[NSNumber numberWithInteger :sequence_number]];
+  [self.pendingRequests setObject:callback
+                           forKey:[NSNumber numberWithInteger:sequence_number]];
   assert(ret == RCL_RET_OK);
 }
 
--(void)handleResponse
-  :(int64_t) sequenceNumber
-  :(id) response
-{
-  NSNumber * nsseq = [NSNumber numberWithInteger :sequenceNumber];
-  void(^callback)(id) = self.pendingRequests[nsseq];
+- (void)handleResponse:(int64_t)sequenceNumber:(id)response {
+  NSNumber *nsseq = [NSNumber numberWithInteger:sequenceNumber];
+  // void(^callback)(id) = self.pendingRequests[nsseq];
+  void (^callback)(id) = [self.pendingRequests objectForKey:nsseq];
   [self.pendingRequests removeObjectForKey:nsseq];
   callback(response);
 }

@@ -17,12 +17,10 @@
 
 @interface ROSRCLObjC : NSObject
 
-+(bool)ok;
-
-+(void)rclInit;
-
-+(ROSNode *)createNode :(NSString *)nodeName;
-
-+(void)spinOnce :(ROSNode *)node;
++ (bool)ok;
++ (void)rclInit;
++ (ROSNode *)createNode:(NSString *)nodeName;
++ (ROSNode *)createNode:(NSString *)nodeName:(NSString *)nodeNamespace;
++ (void)spinOnce:(ROSNode *)node;
 
 @end

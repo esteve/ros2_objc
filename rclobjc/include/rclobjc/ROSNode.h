@@ -20,22 +20,36 @@
 #import "rclobjc/ROSService.h"
 #import "rclobjc/ROSSubscription.h"
 
-@interface ROSNode : NSObject
+@interface ROSNode : NSObject {
+  NSString *nodeName;
+  NSString *nodeNamespace;
+  intptr_t nodeHandle;
+  NSMutableSet<ROSSubscription *> *subscriptions;
+  NSMutableSet<ROSService *> *services;
+  NSMutableSet<ROSClient *> *clients;
+}
 
--(ROSPublisher *)createPublisher :(Class)messageType :(NSString *)topic;
+- (ROSPublisher *)createPublisher:(Class)messageType:(NSString *)topic;
 
--(ROSSubscription *)createSubscriptionWithCallback :(Class)messageType :(NSString *)topic :(void(^)(id))callback;
+- (ROSSubscription *)createSubscriptionWithCallback:(Class)
+                                        messageType:(NSString *)
+                                              topic:(void (^)(id))callback;
 
--(ROSService *)createServiceWithCallback :(Class)serviceType :(NSString *)serviceName :(void(^)(id, id, id))callback;
+- (ROSService *)createServiceWithCallback:(Class)
+                              serviceType:(NSString *)
+                              serviceName:(void (^)(id, id, id))callback;
 
--(ROSClient *)createClient :(Class)serviceType :(NSString *)serviceName;
+- (ROSClient *)createClient:(Class)serviceType:(NSString *)serviceName;
 
--(instancetype)initWithNameAndHandle :(NSString *)nodeName :(intptr_t)nodeHandle;
+- (instancetype)initWithArguments:(NSString *)
+                         nodeName:(NSString *)
+                    nodeNamespace:(intptr_t)nodeHandle;
 
-@property (readonly) NSString *nodeName;
-@property (readonly) long nodeHandle;
-@property (retain, nonatomic) NSMutableSet<ROSSubscription *> *subscriptions;
-@property (retain, nonatomic) NSMutableSet<ROSService *> *services;
-@property (retain, nonatomic) NSMutableSet<ROSClient *> *clients;
+@property(readonly) NSString *nodeName;
+@property(readonly) NSString *nodeNamespace;
+@property(readonly) intptr_t nodeHandle;
+@property(retain, nonatomic) NSMutableSet<ROSSubscription *> *subscriptions;
+@property(retain, nonatomic) NSMutableSet<ROSService *> *services;
+@property(retain, nonatomic) NSMutableSet<ROSClient *> *clients;
 
 @end

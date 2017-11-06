@@ -15,30 +15,30 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ROSClient<MessageType> : NSObject
+@interface ROSClient<MessageType> : NSObject {
+  intptr_t nodeHandle;
+  intptr_t clientHandle;
+  Class serviceType;
+  NSString *serviceName;
+  Class requestType;
+  Class responseType;
+  NSMutableDictionary<NSNumber *, void (^)(id)> *pendingRequests;
+}
 
--(instancetype)initWithArguments
-  :(intptr_t)nodeHandle
-  :(intptr_t)clientHandle
-  :(Class)serviceType
-  :(NSString *)serviceName
-;
+- (instancetype)initWithArguments:(intptr_t)
+                       nodeHandle:(intptr_t)
+                     clientHandle:(Class)
+                      serviceType:(NSString *)serviceName;
 
--(void)sendRequest
-  :(id)request
-  :(void(^)(id))callback
-;
+- (void)sendRequest:(id)request:(void (^)(id))callback;
 
--(void)handleResponse
-  :(int64_t) sequenceNumber
-  :(id) response
-;
+- (void)handleResponse:(int64_t)sequenceNumber:(id)response;
 
-@property (readonly) intptr_t nodeHandle;
-@property (readonly) intptr_t clientHandle;
-@property (readonly) Class serviceType;
-@property (readonly) NSString *serviceName;
-@property (readonly) Class requestType;
-@property (readonly) Class responseType;
+@property(readonly) intptr_t nodeHandle;
+@property(readonly) intptr_t clientHandle;
+@property(readonly) Class serviceType;
+@property(readonly) NSString *serviceName;
+@property(readonly) Class requestType;
+@property(readonly) Class responseType;
 
 @end

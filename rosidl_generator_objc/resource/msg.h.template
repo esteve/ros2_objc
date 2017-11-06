@@ -1,21 +1,31 @@
-#import <Foundation/Foundation.h>
-
 @{
 message_objc_name = 'ROS_{}_{}_{}'.format(spec.base_type.pkg_name, subfolder, spec.base_type.type)
 }@
+#import <Foundation/Foundation.h>
 
-@@interface @(message_objc_name) : NSObject
+@@interface @(message_objc_name) : NSObject {
 @[for field in spec.fields]@
 @[    if field.type.is_array]@
-// TODO(esteve): arrays are not supported yet
+  // TODO(esteve): arrays are not supported yet
 @[    else]@
 @[        if field.type.is_primitive_type()]@
-@@property (assign) @(get_objc_type(field.type)) @(field.name);
+  @(get_objc_type(field.type)) @(field.name);
+@[        end if]@
+@[    end if]@
+@[end for]@
+}
+
+@[for field in spec.fields]@
+@[    if field.type.is_array]@
+  // TODO(esteve): arrays are not supported yet
+@[    else]@
+@[        if field.type.is_primitive_type()]@
+@@property(assign) @(get_objc_type(field.type)) @(field.name);
 @[        end if]@
 @[    end if]@
 @[end for]@
 
-+(intptr_t)typesupportHandle;
-+(intptr_t)fromObjcConverterPtr;
-+(intptr_t)toObjcConverterPtr;
++ (intptr_t)typesupportHandle;
++ (intptr_t)fromObjcConverterPtr;
++ (intptr_t)toObjcConverterPtr;
 @@end

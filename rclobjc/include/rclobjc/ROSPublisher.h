@@ -15,14 +15,20 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ROSPublisher<MessageType> : NSObject
+@interface ROSPublisher <MessageType> : NSObject {
+  intptr_t nodeHandle;
+  intptr_t publisherHandle;
+  NSString *topic;
+}
 
--(void)publish:(MessageType)message;
+- (void)publish:(MessageType)message;
 
--(instancetype)initWithArguments :(intptr_t)nodeHandle :(intptr_t)publisherHandle :(NSString *)topic;
+- (instancetype)initWithArguments:(intptr_t)
+                       nodeHandle:(intptr_t)
+                  publisherHandle:(NSString *)topic;
 
-@property (readonly) intptr_t nodeHandle;
-@property (readonly) intptr_t publisherHandle;
-@property (readonly) NSString *topic;
+@property(readonly) intptr_t nodeHandle;
+@property(readonly) intptr_t publisherHandle;
+@property(readonly) NSString *topic;
 
 @end
