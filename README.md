@@ -147,16 +147,17 @@ git submodule init
 git submodule update
 cd ~/ros2_ios_ws
 
-# Use the latest version of the iOS SDK (replace "." with "-") that your XCode installation supports, even if you plan to deploy the examples on an an older device
+# Use the latest version of the iOS SDK (replace "." with "-") that your XCode
+# installation supports, even if you plan to deploy the examples on an an older device
 export ROS2_IOS_VERSION="10-1"
 export XCODE_XCCONFIG_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/scripts/NoCodeSign.xcconfig
 
 src/ament/ament_tools/scripts/ament.py build \
   --isolated \
   --cmake-args \
-  -DTHIRDPARTY=ON -DCOMPILE_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF -DEPROSIMA_HONOR_BUILD_SHARED_LIBS=ON -DCMAKE_TOOLCHAIN_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/ios-nocodesign-"$ROS2_IOS_VERSION".cmake -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -- \
-  --ament-cmake-args \
-  -DTHIRDPARTY=ON -DCOMPILE_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF -DEPROSIMA_HONOR_BUILD_SHARED_LIBS=ON -DCMAKE_TOOLCHAIN_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/ios-nocodesign-"$ROS2_IOS_VERSION".cmake -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -- \
+  -DTHIRDPARTY=ON -DCOMPILE_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF \
+  -DCMAKE_TOOLCHAIN_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/ios-nocodesign-"$ROS2_IOS_VERSION".cmake \
+  -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -- \
   --make-flags -sdk iphoneos
 ```
 
@@ -197,4 +198,4 @@ TODO
 - Support QoS in rclobjc
 - Provide instructions for integrating with Swift
 - Add tests
-- Add tutorial for developing ROS2/iOS applications from scratch that
+- Add tutorial for developing ROS2/iOS applications from scratch

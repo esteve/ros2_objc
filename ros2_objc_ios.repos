@@ -51,10 +51,10 @@ repositories:
     type: git
     url: https://github.com/ros2/rcl.git
     version: master
-  ros2/rclutils:
+  ros2/rcutils:
     type: git
-    url: https://github.com/ros2/rclutils.git
-    version: master
+    url: https://github.com/esteve/rcutils.git
+    version: honor-build-shared-libs
   ros2/rcl_interfaces:
     type: git
     url: https://github.com/ros2/rcl_interfaces.git
@@ -65,8 +65,8 @@ repositories:
     version: master
   ros2/rmw_fastrtps:
     type: git
-    url: https://github.com/esteve/rmw_fastrtps.git
-    version: honor-build-shared-libs-ios
+    url: https://github.com/ros2/rmw_fastrtps.git
+    version: master
   ros2/rmw_implementation:
     type: git
     url: https://github.com/ros2/rmw_implementation.git
