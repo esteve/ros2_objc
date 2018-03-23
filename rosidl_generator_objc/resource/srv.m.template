@@ -5,7 +5,7 @@ message_objc_name = 'ROS_{}_{}_{}'.format(package_name, subfolder, type_name)
 
 #include <@(spec.pkg_name)/@(subfolder)/@(module_name).h>
 
-#include "rosidl_generator_c/service_type_support.h"
+#include "rosidl_generator_c/service_type_support_struct.h"
 
 #import "ROS_@(package_name)/@(subfolder)/@(type_name).h"
 
