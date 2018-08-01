@@ -17,8 +17,8 @@ repositories:
     version: master
   ament/ament_tools:
     type: git
-    url: https://github.com/ament/ament_tools.git
-    version: master
+    url: https://github.com/esteve/ament_tools.git
+    version: xcode-configuration
   ament/gmock_vendor:
     type: git
     url: https://github.com/ament/gmock_vendor.git
@@ -59,9 +59,17 @@ repositories:
     type: git
     url: https://github.com/ros2/common_interfaces.git
     version: master
+  ros2/console_bridge_vendor:
+    type: git
+    url: https://github.com/ros2/console_bridge_vendor.git
+    version: master
   ros2/demos:
     type: git
     url: https://github.com/ros2/demos.git
+    version: master
+  ros2/example_interfaces:
+    type: git
+    url: https://github.com/ros2/example_interfaces.git
     version: master
   ros2/examples:
     type: git
@@ -70,6 +78,10 @@ repositories:
   ros2/launch:
     type: git
     url: https://github.com/ros2/launch.git
+    version: master
+  ros2/libyaml_vendor:
+    type: git
+    url: https://github.com/ros2/libyaml_vendor.git
     version: master
   ros2/rcl:
     type: git
@@ -89,8 +101,8 @@ repositories:
     version: master
   ros2/rcutils:
     type: git
-    url: https://github.com/esteve/rcutils.git
-    version: honor-build-shared-libs
+    url: https://github.com/ros2/rcutils.git
+    version: master
   ros2/realtime_support:
     type: git
     url: https://github.com/ros2/realtime_support.git
@@ -98,10 +110,6 @@ repositories:
   ros2/rmw:
     type: git
     url: https://github.com/ros2/rmw.git
-    version: master
-  ros2/rmw_connext:
-    type: git
-    url: https://github.com/ros2/rmw_connext.git
     version: master
   ros2/rmw_fastrtps:
     type: git
@@ -111,26 +119,30 @@ repositories:
     type: git
     url: https://github.com/ros2/rmw_implementation.git
     version: master
-  ros2/rmw_opensplice:
-    type: git
-    url: https://github.com/ros2/rmw_opensplice.git
-    version: master
   ros2/ros1_bridge:
     type: git
     url: https://github.com/ros2/ros1_bridge.git
     version: master
   ros2/rosidl:
     type: git
-    url: https://github.com/esteve/rosidl.git
-    version: honor-build-shared-libs
+    url: https://github.com/ros2/rosidl.git
+    version: master
   ros2/rosidl_dds:
     type: git
     url: https://github.com/ros2/rosidl_dds.git
     version: master
+  ros2/rosidl_defaults:
+    type: git
+    url: https://github.com/ros2/rosidl_defaults.git
+    version: master
+  ros2/rosidl_python:
+    type: git
+    url: https://github.com/ros2/rosidl_python.git
+    version: master
   ros2/rosidl_typesupport:
     type: git
-    url: https://github.com/esteve/rosidl_typesupport.git
-    version: disable-multiple-typesupport-static
+    url: https://github.com/ros2/rosidl_typesupport.git
+    version: master
   ros2/system_tests:
     type: git
     url: https://github.com/ros2/system_tests.git
@@ -146,8 +158,4 @@ repositories:
   ros2_objc/ros2_objc_examples:
     type: git
     url: https://github.com/esteve/ros2_objc_examples.git
-    version: master
-  vendor/console_bridge:
-    type: git
-    url: https://github.com/ros/console_bridge.git
     version: master

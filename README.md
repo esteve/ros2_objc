@@ -11,45 +11,6 @@ Besides this repository itself, there's also:
 - https://github.com/esteve/ros2_ios_examples, examples for iOS
 - https://github.com/esteve/ros2_objc_examples, examples for macOS
 
-Additionally, there is a collection of pull requests for ROS2 that are needed for RCLObjC to work on macOS and iOS:
-
-#### Pending
-
-[rmw_fastrtps] Export FastRTPS libraries
-
-https://github.com/ros2/rmw_fastrtps/pull/75
-
-[rosidl] Control shared/static linking via BUILD_SHARED_LIBS
-
-https://github.com/ros2/rosidl/pull/183
-
-#### Merged
-
-[ament_tools] Use Xcode as system generator and builder on OSX
-
-https://github.com/ament/ament_tools/pull/127
-
-[Fast-CDR] Control shared/static linking via EPROSIMA_HONOR_BUILD_SHARED_LIBS and BUILD_SHARED_LIBS
-
-https://github.com/eProsima/Fast-CDR/pull/8
-
-[rcl] Control shared/static linking via BUILD_SHARED_LIBS
-
-https://github.com/ros2/rcl/pull/93
-https://github.com/ros2/rcl/pull/115
-
-[rmw] Add support for pthread-based thread local storage
-
-https://github.com/ros2/rmw/pull/80
-
-[rmw] Control shared/static linking via BUILD_SHARED_LIBS
-
-https://github.com/ros2/rmw/pull/81
-
-[rmw_fastrtps] Control shared/static linking via BUILD_SHARED_LIBS and ament_cmake_ros 
-
-https://github.com/ros2/rmw_fastrtps/pull/87
-
 Does this support Swift?
 ------------------------
 
@@ -137,26 +98,19 @@ mkdir -p ~/ros2_ios_ws/src
 cd ~/ros2_ios_ws
 wget https://raw.githubusercontent.com/esteve/ros2_objc/master/ros2_objc_ios.repos
 vcs import ~/ros2_ios_ws/src < ros2_objc_ios.repos
-touch ~/ros2_ios_ws/src/ros2/rosidl/python_cmake_module/AMENT_IGNORE
-touch ~/ros2_ios_ws/src/ros2/rosidl/rosidl_generator_py/AMENT_IGNORE
 touch ~/ros2_ios_ws/src/ruslo/polly/examples/01-executable/AMENT_IGNORE
 touch ~/ros2_ios_ws/src/ruslo/polly/examples/02-library/AMENT_IGNORE
 touch ~/ros2_ios_ws/src/ruslo/polly/examples/03-shared-link/AMENT_IGNORE
-cd ~/ros2_ios_ws/src/eProsima/Fast-RTPS-ios
-git submodule init
-git submodule update
-cd ~/ros2_ios_ws
 
-# Use the latest version of the iOS SDK (replace "." with "-") that your XCode
-# installation supports, even if you plan to deploy the examples on an an older device
-export ROS2_IOS_VERSION="10-1"
 export XCODE_XCCONFIG_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/scripts/NoCodeSign.xcconfig
 
 src/ament/ament_tools/scripts/ament.py build \
-  --isolated \
+  --use-xcode \
   --cmake-args \
-  -DTHIRDPARTY=ON -DCOMPILE_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF \
-  -DCMAKE_TOOLCHAIN_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/ios-nocodesign-"$ROS2_IOS_VERSION".cmake \
+  -DTHIRDPARTY=ON \
+  -DINSTALL_EXAMPLES=OFF \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DCMAKE_TOOLCHAIN_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/ios-nocodesign.cmake \
   -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -- \
   --make-flags -sdk iphoneos
 ```
