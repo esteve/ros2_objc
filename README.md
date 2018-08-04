@@ -1,6 +1,14 @@
 ROS2 for Objective C and iOS
 ============================
 
+Build status
+------------
+
+| Target | Status |
+|----------|--------|
+| **macOS** | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/esteve/ros2_objc/branches/master/1)](https://travis-ci.org/esteve/ros2_objc) |
+| **iOS** | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/esteve/ros2_objc/branches/master/2)](https://travis-ci.org/esteve/ros2_objc) |
+
 Introduction
 ------------
 

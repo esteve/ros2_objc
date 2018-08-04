@@ -1,0 +1,99 @@
+language: generic
+os: osx
+
+env:
+  - TARGET_PLATFORM=macos
+  - TARGET_PLATFORM=ios
+
+install:
+  - if [ "${TARGET_PLATFORM}" = "macos" ]; then
+      brew install cmake cppcheck eigen pcre poco python3 tinyxml wget;
+      brew install asio tinyxml2;
+      brew install opencv;
+      python3 -m pip install
+        argcomplete
+        catkin_pkg
+        colcon-common-extensions
+        coverage
+        empy
+        flake8
+        flake8-blind-except
+        flake8-builtins
+        flake8-class-newline
+        flake8-comprehensions
+        flake8-deprecated
+        flake8-docstrings
+        flake8-import-order
+        flake8-quotes
+        mock
+        nose
+        pep8
+        pydocstyle
+        pyparsing
+        setuptools
+        vcstool;
+    fi
+  - if [ "${TARGET_PLATFORM}" = "ios" ]; then
+      brew install cmake python3 wget;
+      python3 -m pip install argcomplete catkin_pkg colcon-common-extensions empy pyparsing setuptools vcstool;
+    fi
+  - gem install xcpretty
+  - gem install xcpretty-travis-formatter
+
+script:
+  - if [ "${TARGET_PLATFORM}" = "macos" ]; then
+      mkdir -p ~/ros2_objc_ws/src;
+      cd ~/ros2_objc_ws;
+      wget https://raw.githubusercontent.com/esteve/ros2_objc/${TRAVIS_BRANCH}/ros2_objc_macos_travis.repos;
+      vcs import ~/ros2_objc_ws/src < ros2_objc_macos_travis.repos;
+      cd ~/ros2_objc_ws/src/ros2_objc;
+      vcs custom --git --args checkout ${TRAVIS_BRANCH};
+      cd ~/ros2_objc_ws;
+      src/ament/ament_tools/scripts/ament.py build
+        --skip-packages
+        actionlib_msgs
+        diagnostic_msgs
+        geometry_msgs
+        nav_msgs
+        sensor_msgs
+        shape_msgs
+        stereo_msgs
+        trajectory_msgs
+        visualization_msgs;
+    fi
+  - if [ "${TARGET_PLATFORM}" = "ios" ]; then
+      mkdir -p ~/ros2_ios_ws/src;
+      cd ~/ros2_ios_ws;
+      wget https://raw.githubusercontent.com/esteve/ros2_objc/${TRAVIS_BRANCH}/ros2_objc_ios.repos;
+      vcs import ~/ros2_ios_ws/src < ros2_objc_ios.repos;
+      touch ~/ros2_ios_ws/src/ruslo/polly/examples/01-executable/AMENT_IGNORE;
+      touch ~/ros2_ios_ws/src/ruslo/polly/examples/02-library/AMENT_IGNORE;
+      touch ~/ros2_ios_ws/src/ruslo/polly/examples/03-shared-link/AMENT_IGNORE;
+      cd ~/ros2_ios_ws/src/ros2_objc;
+      vcs custom --git --args checkout ${TRAVIS_BRANCH};
+      cd ~/ros2_ios_ws;
+
+      export XCODE_XCCONFIG_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/scripts/NoCodeSign.xcconfig;
+
+      src/ament/ament_tools/scripts/ament.py build
+        --use-xcode
+        --skip-packages
+        actionlib_msgs
+        diagnostic_msgs
+        geometry_msgs
+        nav_msgs
+        sensor_msgs
+        shape_msgs
+        stereo_msgs
+        trajectory_msgs
+        visualization_msgs
+        rosidl_typesupport_fastrtps_c
+        rmw_fastrtps_cpp
+        --cmake-args
+        -DTHIRDPARTY=ON
+        -DINSTALL_EXAMPLES=OFF
+        -DBUILD_SHARED_LIBS=OFF
+        -DCMAKE_TOOLCHAIN_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/ios-nocodesign.cmake
+        -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO --
+        --make-flags -sdk iphoneos | xcpretty -f `xcpretty-travis-formatter` && exit ${PIPESTATUS[0]};
+    fi
