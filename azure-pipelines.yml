@@ -1,0 +1,90 @@
+pool:
+  vmImage: 'macOS-10.13'
+
+strategy:
+  matrix:
+    macos:
+      target_platform: 'macos'
+    ios:
+      target_platform: 'ios'
+  maxParallel: 2
+
+steps:
+- script: |
+    brew install cmake cppcheck eigen pcre poco python3 tinyxml wget
+    brew install asio tinyxml2
+    brew install opencv
+    python3 -m pip install \
+      argcomplete \
+      catkin_pkg \
+      colcon-common-extensions \
+      coverage \
+      empy \
+      flake8 \
+      flake8-blind-except \
+      flake8-builtins \
+      flake8-class-newline \
+      flake8-comprehensions \
+      flake8-deprecated \
+      flake8-docstrings \
+      flake8-import-order \
+      flake8-quotes \
+      mock \
+      nose \
+      pep8 \
+      pydocstyle \
+      pyparsing \
+      setuptools \
+      vcstool
+  displayName: 'Install dependencies for macOS'
+  condition: eq(variables.TARGET_PLATFORM, 'macos')
+
+- script: |
+    brew install cmake python3 wget
+    python3 -m pip install argcomplete catkin_pkg colcon-common-extensions empy pyparsing setuptools vcstool
+  displayName: 'Install dependencies for iOS'
+  condition: eq(variables.TARGET_PLATFORM, 'ios')
+
+- script: |
+    sudo gem install xcpretty
+    sudo gem install xcpretty-travis-formatter
+  displayName: 'Install log beautifier'
+
+
+- script: |
+    mkdir -p ~/ros2_objc_ws/src
+    cd ~/ros2_objc_ws
+    wget https://raw.githubusercontent.com/esteve/ros2_objc/${BUILD_SOURCEBRANCHNAME}/ros2_objc_macos.repos
+    vcs import ~/ros2_objc_ws/src < ros2_objc_macos.repos
+    cd ~/ros2_objc_ws/src/ros2_objc
+    vcs custom --git --args checkout ${BUILD_SOURCEBRANCHNAME}
+    cd ~/ros2_objc_ws
+    src/ament/ament_tools/scripts/ament.py build
+  displayName: 'Build ros2-objc for macOS'
+  condition: eq(variables.TARGET_PLATFORM, 'macos')
+
+- script: |
+    mkdir -p ~/ros2_ios_ws/src
+    cd ~/ros2_ios_ws
+    wget https://raw.githubusercontent.com/esteve/ros2_objc/${BUILD_SOURCEBRANCHNAME}/ros2_objc_ios.repos
+    vcs import ~/ros2_ios_ws/src < ros2_objc_ios.repos
+    touch ~/ros2_ios_ws/src/ruslo/polly/examples/01-executable/AMENT_IGNORE
+    touch ~/ros2_ios_ws/src/ruslo/polly/examples/02-library/AMENT_IGNORE
+    touch ~/ros2_ios_ws/src/ruslo/polly/examples/03-shared-link/AMENT_IGNORE
+    cd ~/ros2_ios_ws/src/ros2_objc
+    vcs custom --git --args checkout ${BUILD_SOURCEBRANCHNAME}
+    cd ~/ros2_ios_ws
+
+    export XCODE_XCCONFIG_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/scripts/NoCodeSign.xcconfig
+
+    src/ament/ament_tools/scripts/ament.py build \
+      --use-xcode \
+      --cmake-args \
+      -DTHIRDPARTY=ON \
+      -DINSTALL_EXAMPLES=OFF \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DCMAKE_TOOLCHAIN_FILE=$HOME/ros2_ios_ws/src/ruslo/polly/ios-nocodesign.cmake \
+      -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -- \
+      --make-flags -sdk iphoneos
+  displayName: 'Build ros2-objc for iOS'
+  condition: eq(variables.TARGET_PLATFORM, 'ios')

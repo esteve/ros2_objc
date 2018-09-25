@@ -6,8 +6,8 @@ Build status
 
 | Target | Status |
 |----------|--------|
-| **macOS** | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/esteve/ros2_objc/branches/master/1)](https://travis-ci.org/esteve/ros2_objc) |
-| **iOS** | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/esteve/ros2_objc/branches/master/2)](https://travis-ci.org/esteve/ros2_objc) |
+| **macOS** | [![Build Status](http://vsts-matrix-badges.herokuapp.com/repos/ros2-objc/ros2-objc/1/branches/master/1)](https://dev.azure.com/ros2-objc/ros2-objc/_build?definitionId=1) |
+| **iOS** | [![Build Status](http://vsts-matrix-badges.herokuapp.com/repos/ros2-objc/ros2-objc/1/branches/master/2)](https://dev.azure.com/ros2-objc/ros2-objc/_build?definitionId=1) |
 
 Introduction
 ------------
