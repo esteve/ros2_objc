@@ -47,10 +47,6 @@ repositories:
     type: git
     url: https://github.com/ros/console_bridge.git
     version: ad25f7307da76be2857545e7e5c2a20727eee542
-  ros2/console_bridge_vendor:
-    type: git
-    url: https://github.com/ros2/console_bridge_vendor.git
-    version: master
   ros2/ament_cmake_ros:
     type: git
     url: https://github.com/ros2/ament_cmake_ros.git
