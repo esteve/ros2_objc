@@ -50,7 +50,6 @@ steps:
     sudo gem install xcpretty-travis-formatter
   displayName: 'Install log beautifier'
 
-
 - script: |
     mkdir -p ~/ros2_objc_ws/src
     cd ~/ros2_objc_ws
