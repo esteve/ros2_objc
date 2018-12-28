@@ -59,7 +59,9 @@ steps:
     vcs custom --git --args checkout ${BUILD_SOURCEBRANCHNAME}
     cd ~/ros2_objc_ws
     src/ament/ament_tools/scripts/ament.py build \
-      --parallel
+      --parallel \
+      --cmake-args \
+      -DTHIRDPARTY=ON
   displayName: 'Build ros2-objc for macOS'
   condition: eq(variables.TARGET_PLATFORM, 'macos')
 
