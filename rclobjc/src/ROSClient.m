@@ -29,7 +29,7 @@
 @property(assign) Class requestType;
 @property(assign) Class responseType;
 @property(assign)
-    NSMutableDictionary<NSNumber *, void (^)(id)> *pendingRequests;
+    NSMutableDictionary<NSNumber *, void (*)(id)> *pendingRequests;
 
 @end
 
@@ -60,7 +60,7 @@
   return self;
 }
 
-- (void)sendRequest:(id)request:(void (^)(id))callback {
+- (void)sendRequest:(id)request:(void (*)(id))callback {
   rcl_client_t *client = (rcl_client_t *)self.clientHandle;
 
   typedef void *(*convert_from_objc_signature)(NSObject *);
@@ -84,8 +84,8 @@
 
 - (void)handleResponse:(int64_t)sequenceNumber:(id)response {
   NSNumber *nsseq = [NSNumber numberWithInteger:sequenceNumber];
-  // void(^callback)(id) = self.pendingRequests[nsseq];
-  void (^callback)(id) = [self.pendingRequests objectForKey:nsseq];
+  // void(*callback)(id) = self.pendingRequests[nsseq];
+  void (*callback)(id) = [self.pendingRequests objectForKey:nsseq];
   [self.pendingRequests removeObjectForKey:nsseq];
   callback(response);
 }

@@ -19,20 +19,20 @@
   intptr_t nodeHandle;
   intptr_t subscriptionHandle;
   NSString *topic;
-  void (^callback)(NSObject *);
+  void (*callback)(NSObject *);
   Class messageType;
 }
 
-- (instancetype)initWithArguments:(intptr_t)
+- (instancetype)initWithArguments:(intptr_t) foo
                        nodeHandle:(intptr_t)
                subscriptionHandle:(NSString *)
                             topic:(Class)
-                      messageType:(void (^)(NSObject *))callback;
+                      messageType:(void (*)(NSObject *))callback;
 
 @property(readonly) intptr_t nodeHandle;
 @property(readonly) intptr_t subscriptionHandle;
 @property(readonly) NSString *topic;
-@property(readonly) void (^callback)(NSObject *);
+@property(readonly) void (*callback)(NSObject *);
 @property(readonly) Class messageType;
 
 @end

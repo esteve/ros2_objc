@@ -14,7 +14,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
+z
 @interface ROSClient<MessageType> : NSObject {
   intptr_t nodeHandle;
   intptr_t clientHandle;
@@ -22,7 +22,7 @@
   NSString *serviceName;
   Class requestType;
   Class responseType;
-  NSMutableDictionary<NSNumber *, void (^)(id)> *pendingRequests;
+  NSMutableDictionary<NSNumber *, void (*)(id)> *pendingRequests;
 }
 
 - (instancetype)initWithArguments:(intptr_t)
