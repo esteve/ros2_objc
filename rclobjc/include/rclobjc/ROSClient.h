@@ -14,7 +14,20 @@
  */
 
 #import <Foundation/Foundation.h>
-z
+
+typedef void (*FunctionPointer)(id);
+
+@interface FunctionPointerContainer:NSObject {
+   FunctionPointer funtionPointer;
+}
+
+- (instancetype)initWithArguments: (FunctionPointer)init_funtionPointer;
+- (FunctionPointer)getFunctionPointer;
+
+@property(readonly) FunctionPointer funtionPointer;
+
+@end
+
 @interface ROSClient<MessageType> : NSObject {
   intptr_t nodeHandle;
   intptr_t clientHandle;
@@ -22,7 +35,7 @@ z
   NSString *serviceName;
   Class requestType;
   Class responseType;
-  NSMutableDictionary<NSNumber *, void (*)(id)> *pendingRequests;
+  NSMutableDictionary<NSNumber *, FunctionPointerContainer *> *pendingRequests;
 }
 
 - (instancetype)initWithArguments:(intptr_t)
@@ -30,7 +43,7 @@ z
                      clientHandle:(Class)
                       serviceType:(NSString *)serviceName;
 
-- (void)sendRequest:(id)request:(void (^)(id))callback;
+- (void)sendRequest:(id)request:(void (*)(id))callback;
 
 - (void)handleResponse:(int64_t)sequenceNumber:(id)response;
 

@@ -30,7 +30,7 @@
 @property(assign) Class responseType;
 @property(assign)
     NSMutableDictionary<NSNumber *, void (*)(id)> *pendingRequests;
-
+    
 @end
 
 @implementation ROSClient
