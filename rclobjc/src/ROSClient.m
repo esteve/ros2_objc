@@ -20,6 +20,28 @@
 
 #import "rclobjc/ROSClient.h"
 
+@interface FunctionPointerContainer ()
+
+@property(assign) FunctionPointer funtionPointer;
+
+@end
+
+@implementation FunctionPointerContainer
+
+@synthesize funtionPointer;
+
+- (instancetype)initWithArguments: (FunctionPointer)init_funtionPointer {
+    self.funtionPointer = init_funtionPointer;
+    return self;
+}
+
+- (FunctionPointer)getFunctionPointer {
+    return self.funtionPointer;
+}
+@end
+
+
+
 @interface ROSClient ()
 
 @property(assign) intptr_t nodeHandle;
@@ -29,7 +51,7 @@
 @property(assign) Class requestType;
 @property(assign) Class responseType;
 @property(assign)
-    NSMutableDictionary<NSNumber *, void (^)(id)> *pendingRequests;
+    NSMutableDictionary<NSNumber *, FunctionPointerContainer *> *pendingRequests;
 
 @end
 
@@ -60,7 +82,7 @@
   return self;
 }
 
-- (void)sendRequest:(id)request:(void (^)(id))callback {
+- (void)sendRequest:(id)request:(void (*)(id))callback {
   rcl_client_t *client = (rcl_client_t *)self.clientHandle;
 
   typedef void *(*convert_from_objc_signature)(NSObject *);
@@ -74,18 +96,20 @@
   void *ros_request_msg = convert_request_from_objc(request);
 
   int64_t sequence_number = 0;
-
   rcl_ret_t ret = rcl_send_request(client, ros_request_msg, &sequence_number);
 
-  [self.pendingRequests setObject:callback
-                           forKey:[NSNumber numberWithInteger:sequence_number]];
+  int key = [NSNumber numberWithInteger:sequence_number];
+
+  [self.pendingRequests setObject:[[FunctionPointerContainer alloc] initWithArguments :callback]
+                           forKey:key];
+
   assert(ret == RCL_RET_OK);
 }
 
 - (void)handleResponse:(int64_t)sequenceNumber:(id)response {
   NSNumber *nsseq = [NSNumber numberWithInteger:sequenceNumber];
-  // void(^callback)(id) = self.pendingRequests[nsseq];
-  void (^callback)(id) = [self.pendingRequests objectForKey:nsseq];
+
+  void (*callback)(id) = [[self.pendingRequests objectForKey:nsseq] getFunctionPointer];
   [self.pendingRequests removeObjectForKey:nsseq];
   callback(response);
 }

@@ -20,20 +20,20 @@
   intptr_t serviceHandle;
   Class serviceType;
   NSString *serviceName;
-  void (^callback)(NSObject *, NSObject *, NSObject *);
+  void (*callback)(NSObject *, NSObject *, NSObject *);
 }
 
 - (instancetype)initWithArguments:(intptr_t)
                        nodeHandle:(intptr_t)
                     serviceHandle:(Class)
                       serviceType:(NSString *)
-                      serviceName:(void (^)(NSObject *, NSObject *,
+                      serviceName:(void (*)(NSObject *, NSObject *,
                                             NSObject *))callback;
 
 @property(readonly) intptr_t nodeHandle;
 @property(readonly) intptr_t serviceHandle;
 @property(readonly) Class serviceType;
 @property(readonly) NSString *serviceName;
-@property(readonly) void (^callback)(NSObject *, NSObject *, NSObject *);
+@property(readonly) void (*callback)(NSObject *, NSObject *, NSObject *);
 
 @end

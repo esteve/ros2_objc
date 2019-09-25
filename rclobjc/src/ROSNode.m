@@ -173,7 +173,7 @@
 
 - (ROSSubscription *)createSubscriptionWithCallback:(Class)
                                         messageType:(NSString *)
-                                              topic:(void (^)(id))callback {
+                                              topic:(void (*)(id))callback {
   intptr_t subscriptionHandle =
       [ROSNode createSubscriptionHandle:self.nodeHandle:messageType:topic];
   ROSSubscription *subscription = [[ROSSubscription alloc] initWithArguments :self.nodeHandle :subscriptionHandle :topic :messageType :callback];
@@ -183,7 +183,7 @@
 
 - (ROSService *)createServiceWithCallback:(Class)
                               serviceType:(NSString *)
-                              serviceName:(void (^)(id, id, id))callback {
+                              serviceName:(void (*)(id, id, id))callback {
   intptr_t serviceHandle =
       [ROSNode createServiceHandle:self.nodeHandle:serviceType:serviceName];
   ROSService *service = [[ROSService alloc] initWithArguments :self.nodeHandle :serviceHandle :serviceType :serviceName :callback];

@@ -26,7 +26,7 @@
 @property(assign) intptr_t serviceHandle;
 @property(assign) Class serviceType;
 @property(assign) NSString *serviceName;
-@property(assign) void (^callback)(NSObject *, NSObject *, NSObject *);
+@property(assign) void (*callback)(NSObject *, NSObject *, NSObject *);
 
 @end
 
@@ -42,7 +42,7 @@
                        nodeHandle:(intptr_t)
                     serviceHandle:(Class)
                       serviceType:(NSString *)
-                      serviceName:(void (^)(NSObject *, NSObject *,
+                      serviceName:(void (*)(NSObject *, NSObject *,
                                             NSObject *))callback {
   self.nodeHandle = nodeHandle;
   self.serviceHandle = serviceHandle;
