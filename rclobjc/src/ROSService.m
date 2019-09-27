@@ -26,7 +26,7 @@
 @property(assign) intptr_t serviceHandle;
 @property(assign) Class serviceType;
 @property(assign) NSString *serviceName;
-@property(assign) void (^callback)(NSObject *, NSObject *, NSObject *);
+@property(assign) ROSServiceCallbackType callback;
 
 @end
 
@@ -42,8 +42,7 @@
                        nodeHandle:(intptr_t)
                     serviceHandle:(Class)
                       serviceType:(NSString *)
-                      serviceName:(void (^)(NSObject *, NSObject *,
-                                            NSObject *))callback {
+                      serviceName:(ROSServiceCallbackType)callback {
   self.nodeHandle = nodeHandle;
   self.serviceHandle = serviceHandle;
   self.serviceType = serviceType;

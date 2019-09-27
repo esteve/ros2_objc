@@ -15,6 +15,19 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (*ROSServiceCallbackType)(NSObject *, NSObject *, NSObject *);
+
+@interface FunctionPointerContainer:NSObject {
+   ROSServiceCallbackType funtionPointer;
+}
+
+- (instancetype)initWithArguments: (ROSServiceCallbackType)init_funtionPointer;
+- (ROSServiceCallbackType)getFunctionPointer;
+
+@property(readonly) ROSServiceCallbackType funtionPointer;
+
+@end
+
 @interface ROSClient<MessageType> : NSObject {
   intptr_t nodeHandle;
   intptr_t clientHandle;
@@ -22,7 +35,7 @@
   NSString *serviceName;
   Class requestType;
   Class responseType;
-  NSMutableDictionary<NSNumber *, void (^)(id)> *pendingRequests;
+  NSMutableDictionary<NSNumber *, FunctionPointerContainer *> *pendingRequests;
 }
 
 - (instancetype)initWithArguments:(intptr_t)
@@ -30,7 +43,7 @@
                      clientHandle:(Class)
                       serviceType:(NSString *)serviceName;
 
-- (void)sendRequest:(id)request:(void (^)(id))callback;
+- (void)sendRequest:(id)request:(ROSServiceCallbackType)callback;
 
 - (void)handleResponse:(int64_t)sequenceNumber:(id)response;
 
