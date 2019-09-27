@@ -15,16 +15,16 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void (*FunctionPointer)(id);
+typedef void (*ROSServiceCallbackType)(NSObject *, NSObject *, NSObject *);
 
 @interface FunctionPointerContainer:NSObject {
-   FunctionPointer funtionPointer;
+   ROSServiceCallbackType funtionPointer;
 }
 
-- (instancetype)initWithArguments: (FunctionPointer)init_funtionPointer;
-- (FunctionPointer)getFunctionPointer;
+- (instancetype)initWithArguments: (ROSServiceCallbackType)init_funtionPointer;
+- (ROSServiceCallbackType)getFunctionPointer;
 
-@property(readonly) FunctionPointer funtionPointer;
+@property(readonly) ROSServiceCallbackType funtionPointer;
 
 @end
 
@@ -43,7 +43,7 @@ typedef void (*FunctionPointer)(id);
                      clientHandle:(Class)
                       serviceType:(NSString *)serviceName;
 
-- (void)sendRequest:(id)request:(void (*)(id))callback;
+- (void)sendRequest:(id)request:(ROSServiceCallbackType)callback;
 
 - (void)handleResponse:(int64_t)sequenceNumber:(id)response;
 

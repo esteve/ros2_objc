@@ -22,7 +22,7 @@
 
 @interface FunctionPointerContainer ()
 
-@property(assign) FunctionPointer funtionPointer;
+@property(assign) ROSServiceCallbackType funtionPointer;
 
 @end
 
@@ -30,12 +30,12 @@
 
 @synthesize funtionPointer;
 
-- (instancetype)initWithArguments: (FunctionPointer)init_funtionPointer {
+- (instancetype)initWithArguments: (ROSServiceCallbackType)init_funtionPointer {
     self.funtionPointer = init_funtionPointer;
     return self;
 }
 
-- (FunctionPointer)getFunctionPointer {
+- (ROSServiceCallbackType)getFunctionPointer {
     return self.funtionPointer;
 }
 @end
@@ -82,7 +82,7 @@
   return self;
 }
 
-- (void)sendRequest:(id)request:(void (*)(id))callback {
+- (void)sendRequest:(id)request:(ROSServiceCallbackType)callback {
   rcl_client_t *client = (rcl_client_t *)self.clientHandle;
 
   typedef void *(*convert_from_objc_signature)(NSObject *);
@@ -109,7 +109,7 @@
 - (void)handleResponse:(int64_t)sequenceNumber:(id)response {
   NSNumber *nsseq = [NSNumber numberWithInteger:sequenceNumber];
 
-  void (*callback)(id) = [[self.pendingRequests objectForKey:nsseq] getFunctionPointer];
+  void (*callback)(NSObject *) = [[self.pendingRequests objectForKey:nsseq] getFunctionPointer];
   [self.pendingRequests removeObjectForKey:nsseq];
   callback(response);
 }

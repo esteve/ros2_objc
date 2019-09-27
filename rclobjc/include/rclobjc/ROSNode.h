@@ -33,11 +33,11 @@
 
 - (ROSSubscription *)createSubscriptionWithCallback:(Class)
                                         messageType:(NSString *)
-                                              topic:(void (*)(id))callback;
+                                              topic:(ROSSubscriptionCallbackType)callback;
 
 - (ROSService *)createServiceWithCallback:(Class)
                               serviceType:(NSString *)
-                              serviceName:(void (*)(id, id, id))callback;
+                              serviceName:(ROSServiceCallbackType)callback;
 
 - (ROSClient *)createClient:(Class)serviceType:(NSString *)serviceName;
 

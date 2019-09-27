@@ -15,25 +15,26 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (*ROSServiceCallbackType)(NSObject *, NSObject *, NSObject *);
+
 @interface ROSService<MessageType> : NSObject {
   intptr_t nodeHandle;
   intptr_t serviceHandle;
   Class serviceType;
   NSString *serviceName;
-  void (*callback)(NSObject *, NSObject *, NSObject *);
+  ROSServiceCallbackType callback;
 }
 
 - (instancetype)initWithArguments:(intptr_t)
                        nodeHandle:(intptr_t)
                     serviceHandle:(Class)
                       serviceType:(NSString *)
-                      serviceName:(void (*)(NSObject *, NSObject *,
-                                            NSObject *))callback;
+                      serviceName:(ROSServiceCallbackType)callback;
 
 @property(readonly) intptr_t nodeHandle;
 @property(readonly) intptr_t serviceHandle;
 @property(readonly) Class serviceType;
 @property(readonly) NSString *serviceName;
-@property(readonly) void (*callback)(NSObject *, NSObject *, NSObject *);
+@property(readonly) ROSServiceCallbackType callback;
 
 @end

@@ -25,7 +25,7 @@
 @property(assign) intptr_t nodeHandle;
 @property(assign) intptr_t subscriptionHandle;
 @property(assign) NSString *topic;
-@property(assign) void (*callback)(NSObject *);
+@property(assign) ROSSubscriptionCallbackType callback;
 @property(assign) Class messageType;
 
 @end
@@ -42,7 +42,7 @@
                        nodeHandle:(intptr_t)
                subscriptionHandle:(NSString *)
                             topic:(Class)
-                      messageType:(void (*)(NSObject *))callback {
+                      messageType:(ROSSubscriptionCallbackType)callback {
   self.nodeHandle = nodeHandle;
   self.subscriptionHandle = subscriptionHandle;
   self.topic = topic;
